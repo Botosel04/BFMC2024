@@ -1,1 +1,3 @@
 .vscode
+*.cpy
+__pycache__/
