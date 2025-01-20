@@ -1,6 +1,6 @@
 import time
 from src.templates.threadwithstop import ThreadWithStop
-from src.utils.messages.allMessages import (SpeedMotor, mainCamera)
+from src.utils.messages.allMessages import (DrivingMode, SpeedMotor, mainCamera)
 from src.utils.messages.messageHandlerSubscriber import messageHandlerSubscriber
 from src.utils.messages.messageHandlerSender import messageHandlerSender
 class threadmove(ThreadWithStop):
@@ -19,12 +19,15 @@ class threadmove(ThreadWithStop):
         super(threadmove, self).__init__()
 
         self.speed = messageHandlerSender(self.queuesList, SpeedMotor)
+        self.driving_mode = messageHandlerSubscriber(self.queuesList, DrivingMode, "lastOnly", True)
 
     def run(self):
-        #while self._running:
-        self.speed.send("5")
-        print("\n\n\n\nan ajuns aici\n\n\n\n\ns")
-
+        while self._running:
+            drv = self.driving_mode.receive()
+            if drv is not None:
+                if drv == "auto":
+                    self.speed.send("5")
+                    print("a")
     def subscribe(self):
         """Subscribes to the messages you are interested in"""
         pass
