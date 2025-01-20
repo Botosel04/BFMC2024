@@ -52,7 +52,7 @@ class threadmove(ThreadWithStop):
                     
 
 
-    def countRedPixels(image):
+    def countRedPixels(self, image):
         hsv = cv2.cvtColor(image, cv2.COLOR_BGR2HSV)
         lower_red = np.array([160,140,50]) 
         upper_red = np.array([180,255,255])
