@@ -43,7 +43,7 @@
 import sys
 import subprocess
 
-from movement.move import processmove
+from src.movement.move import processmove
 
 sys.path.append(".")
 from multiprocessing import Queue, Event
