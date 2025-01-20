@@ -26,7 +26,7 @@ class threadmove(ThreadWithStop):
             drv = self.driving_mode.receive()
             if drv is not None:
                 if drv == "auto":
-                    self.speed.send("5")
+                    self.speed.send("50")
                     print("a")
     def subscribe(self):
         """Subscribes to the messages you are interested in"""
