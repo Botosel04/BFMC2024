@@ -34,7 +34,7 @@ class threadmove(ThreadWithStop):
             cam = self.camera.receive()
             if drv is not None:
                 if drv == "auto":
-                    self.speed.send("50")
+                    self.speed.send("200")
                     print("a")
             if cam is not None:
                 image_data = base64.b64decode(cam)
@@ -47,7 +47,7 @@ class threadmove(ThreadWithStop):
                     self.speed.send("0")
                     self.driveState = False
                 elif not nrPix > MP/3 and self.driveState == False:
-                    self.speed.send("50")
+                    self.speed.send("200")
                     self.driveState = True
                     
 
