@@ -21,8 +21,8 @@ class threadmove(ThreadWithStop):
         self.speed = messageHandlerSender(self.queuesList, SpeedMotor)
 
     def run(self):
-        while self._running:
-            self.speed.send("5")
+        #while self._running:
+        self.speed.send("5")
 
     def subscribe(self):
         """Subscribes to the messages you are interested in"""
