@@ -43,6 +43,8 @@
 import sys
 import subprocess
 
+from movement.move import processmove
+
 sys.path.append(".")
 from multiprocessing import Queue, Event
 import logging
@@ -78,6 +80,7 @@ Camera = True
 Semaphores = False
 TrafficCommunication = False
 SerialHandler = True
+Movement = True
 
 # ------ New component flags starts here ------#
  
@@ -119,6 +122,10 @@ if TrafficCommunication:
 if SerialHandler:
     processSerialHandler = processSerialHandler(queueList, logging, debugging = False)
     allProcesses.append(processSerialHandler)
+
+if Movement:
+    processMovement = processmove(queueList, logging, debugging = False)
+    allProcesses.append(processMovement)
 
 # ------ New component runs starts here ------#
  
