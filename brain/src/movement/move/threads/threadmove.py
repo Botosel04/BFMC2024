@@ -23,6 +23,7 @@ class threadmove(ThreadWithStop):
     def run(self):
         #while self._running:
         self.speed.send("5")
+        print("\n\n\n\nan ajuns aici\n\n\n\n\ns")
 
     def subscribe(self):
         """Subscribes to the messages you are interested in"""

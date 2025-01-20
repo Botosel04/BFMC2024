@@ -1,6 +1,4 @@
-if __name__ == "__main__":
-    import sys
-    sys.path.insert(0, "../../..")
+
 
 from src.templates.workerprocess import WorkerProcess
 from src.movement.move.threads.threadmove import threadmove
@@ -29,3 +27,25 @@ class processmove(WorkerProcess):
             self.queuesList, self.logging, self.debugging
         )
         self.threads.append(moveTh)
+
+if __name__ == "__main__":
+    from multiprocessing import Queue, Pipe
+    import logging
+    import time
+
+    allProcesses = list()
+    debugg = False
+    # We have a list of multiprocessing.Queue() which individualy represent a priority for processes.
+    queueList = {
+        "Critical": Queue(),
+        "Warning": Queue(),
+        "General": Queue(),
+        "Config": Queue(),
+    }
+    logger = logging.getLogger()
+    pipeRecv, pipeSend = Pipe(duplex=False)
+    process = processmove(queueList, logger, debugg, True)
+    process.daemon = True
+    process.start()
+    time.sleep(4)  # modify the value to increase/decrease the time of the example
+    process.stop()
