@@ -26,7 +26,7 @@ class threadmove(ThreadWithStop):
         self.driving_mode = messageHandlerSubscriber(self.queuesList, DrivingMode, "lastOnly", True)
         self.camera = messageHandlerSubscriber(self.queuesList, serialCamera, "lastOnly", True)
 
-        self.driveState = 1
+        self.driveState = True
 
     def run(self):
         while self._running:
@@ -47,12 +47,12 @@ class threadmove(ThreadWithStop):
                 nrPix = self.countRedPixels(image)
                 height, width, channels = image.shape
                 MP = height*width
-                if nrPix > MP/3 and self.driveState == 1:
+                if nrPix > MP/3 and self.driveState:
                     self.speed.send("0")
-                    self.driveState = 0
-                elif not nrPix > MP/3 and self.driveState == 0:
+                    self.driveState = False
+                elif not nrPix > MP/3 and self.driveState == False:
                     self.speed.send("200")
-                    self.driveState = 1
+                    self.driveState = True
                     
 
 
