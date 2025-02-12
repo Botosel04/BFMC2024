@@ -18,7 +18,7 @@ def update_smoothed_angle(new_angle, alpha=0.2):
     smoothed_angle = alpha * new_angle + (1 - alpha) * smoothed_angle
     return smoothed_angle
 
-def compute_steering_angle(frame, lines, max_angle=30):
+def compute_steering_angle(frame, lines, max_angle=50):
     height, width, _ = frame.shape
 
     if lines is None or len(lines) == 0:
