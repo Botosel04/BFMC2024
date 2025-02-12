@@ -55,6 +55,17 @@ class processCamera(WorkerProcess):
     def run(self):
         """Apply the initializing methods and start the threads."""
         super(processCamera, self).run()
+        if debugg:
+            logger.warning("getting")
+        img = {"msgValue": 1}
+        while type(img["msgValue"]) != type(":text"):
+            img = self.queueList["General"].get()
+        image_data = base64.b64decode(img["msgValue"])
+        img = np.frombuffer(image_data, dtype=np.uint8)
+        image = cv2.imdecode(img, cv2.IMREAD_COLOR)
+        if debugg:
+            logger.warning("got")
+
 
     # ===================================== INIT TH ======================================
     def _init_threads(self):
