@@ -40,7 +40,7 @@ class threadlaneDetection(ThreadWithStop):
                 if steer_angle > 250:
                     steer_angle = 250
                 print(steer_angle)
-                self.steer.send(str(int(-steer_angle)))
+                self.steer.send(str(int(steer_angle)))
 
     def subscribe(self):
         """Subscribes to the messages you are interested in"""
