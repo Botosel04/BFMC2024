@@ -32,7 +32,7 @@ class threadmove(ThreadWithStop):
     def run(self):
         while self._running:
             drv = self.driving_mode.receive()
-            cam = self.camera.receive()
+            #cam = self.camera.receive()
             if drv is not None:
                 if drv == "auto":
                     self.speed.send("200")
