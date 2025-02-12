@@ -36,9 +36,10 @@ class threadmove(ThreadWithStop):
             if drv is not None:
                 if drv == "auto":
                     self.speed.send("200")
-                    self.steer.send("-25")
+                    self.steer.send("-23")
                     print("Driving mode set to auto")
                 elif drv in ["manual", "legacy", "stop"]:
+                    self.steer.send("0")
                     self.speed.send("0")
                     print("Driving mode changed from auto")
 
@@ -50,9 +51,11 @@ class threadmove(ThreadWithStop):
                 height, width, channels = image.shape
                 MP = height*width
                 if nrPix > MP/3 and self.driveState:
+                    self.steer.send("0")
                     self.speed.send("0")
                     self.driveState = False
                 elif not nrPix > MP/3 and self.driveState == False:
+                    self.steer.send("-23")
                     self.speed.send("200")
                     self.driveState = True
                     
