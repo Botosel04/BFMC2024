@@ -18,7 +18,7 @@ def update_smoothed_angle(new_angle, alpha=0.2):
     smoothed_angle = alpha * new_angle + (1 - alpha) * smoothed_angle
     return smoothed_angle
 
-def compute_steering_angle(frame, lines, max_angle=50):
+def compute_steering_angle(frame, lines, max_angle=25):
     height, width, _ = frame.shape
 
     if lines is None or len(lines) == 0:
@@ -44,7 +44,7 @@ def compute_steering_angle(frame, lines, max_angle=50):
 
     steering_angle = max(-max_angle, min(max_angle, angle_degree))
 
-    return -(steering_angle*250/30)
+    return -steering_angle*10
 
 def make_coordinates(image, line_parameters):
     slope, intercept = line_parameters
