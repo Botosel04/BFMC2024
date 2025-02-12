@@ -36,7 +36,7 @@ class threadmove(ThreadWithStop):
             if drv is not None:
                 if drv == "auto":
                     self.speed.send("200")
-                    self.steer.send("-230")
+                    self.steer.send("-250")
                     print("Driving mode set to auto")
                 elif drv in ["manual", "legacy", "stop"]:
                     self.steer.send("0")
