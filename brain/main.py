@@ -81,8 +81,8 @@ Camera = True
 Semaphores = False
 TrafficCommunication = False
 SerialHandler = True
-Movement = True
-Perception = True
+Movement = False
+Perception = False
 
 # ------ New component flags starts here ------#
  
