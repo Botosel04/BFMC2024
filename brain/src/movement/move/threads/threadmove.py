@@ -4,7 +4,7 @@ import time
 import cv2
 import numpy as np
 from src.templates.threadwithstop import ThreadWithStop
-from src.utils.messages.allMessages import (DrivingMode, SpeedMotor, mainCamera, serialCamera)
+from src.utils.messages.allMessages import (DrivingMode, SpeedMotor, SteerMotor, mainCamera, serialCamera)
 from src.utils.messages.messageHandlerSubscriber import messageHandlerSubscriber
 from src.utils.messages.messageHandlerSender import messageHandlerSender
 class threadmove(ThreadWithStop):
@@ -23,6 +23,7 @@ class threadmove(ThreadWithStop):
         super(threadmove, self).__init__()
 
         self.speed = messageHandlerSender(self.queuesList, SpeedMotor)
+        self.steer = messageHandlerSender(self.queuesList, SteerMotor)
         self.driving_mode = messageHandlerSubscriber(self.queuesList, DrivingMode, "lastOnly", True)
         self.camera = messageHandlerSubscriber(self.queuesList, serialCamera, "lastOnly", True)
 
@@ -35,6 +36,7 @@ class threadmove(ThreadWithStop):
             if drv is not None:
                 if drv == "auto":
                     self.speed.send("200")
+                    self.steer.send("-25")
                     print("Driving mode set to auto")
                 elif drv in ["manual", "legacy", "stop"]:
                     self.speed.send("0")
