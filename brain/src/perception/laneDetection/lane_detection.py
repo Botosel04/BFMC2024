@@ -3,8 +3,8 @@ import numpy as np
 import math
 
 leftpoint = -100
-rightpoint = 400
-toppoint = 160, 10
+rightpoint = 2000
+toppoint = 1000, 10
 smoothed_angle = 0.0
 
 def apply_deadzone(angle, threshold=5):
@@ -18,7 +18,7 @@ def update_smoothed_angle(new_angle, alpha=0.2):
     smoothed_angle = alpha * new_angle + (1 - alpha) * smoothed_angle
     return smoothed_angle
 
-def compute_steering_angle(frame, lines, max_angle=125):
+def compute_steering_angle(frame, lines, max_angle=30):
     height, width, _ = frame.shape
 
     if lines is None or len(lines) == 0:
@@ -44,7 +44,7 @@ def compute_steering_angle(frame, lines, max_angle=125):
 
     steering_angle = max(-max_angle, min(max_angle, angle_degree))
 
-    return -steering_angle
+    return -(steering_angle*200/30)
 
 def make_coordinates(image, line_parameters):
     slope, intercept = line_parameters
@@ -94,7 +94,7 @@ def average_slope_intercept(lane_image, lines):
 def canny(image):
     gray = cv2.cvtColor(image, cv2.COLOR_RGB2GRAY)
     blur = cv2.GaussianBlur(gray, (5, 5), 0)
-    canny = cv2.Canny(blur, 50, 150)
+    canny = cv2.Canny(blur, 150, 300)
     return canny
 
 def region_of_interest(image):
@@ -108,7 +108,7 @@ def region_of_interest(image):
 def get_steer(image):
     canny_image = canny(image)
     cropped_image = region_of_interest(canny_image)
-    lines = cv2.HoughLinesP(cropped_image, 2, np.pi / 180, 100, np.array([]), minLineLength=40, maxLineGap=30)
+    lines = cv2.HoughLinesP(cropped_image, 2, np.pi / 180, 200, np.array([]), minLineLength=100, maxLineGap=30)
     averaged_lines = average_slope_intercept(image, lines)
     steering_angle = compute_steering_angle(image, averaged_lines)
     smoothed = update_smoothed_angle(steering_angle, alpha=0.2)

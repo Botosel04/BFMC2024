@@ -85,7 +85,7 @@ SerialHandler = True
 # ------ New component flags starts here ------#
  
 Movement = False
-Perception = False
+Perception = True
 
 # ------ New component flags ends here ------#
 

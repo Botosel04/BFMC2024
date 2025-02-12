@@ -24,7 +24,7 @@ class threadlaneDetection(ThreadWithStop):
         super(threadlaneDetection, self).__init__()
 
         self.steer = messageHandlerSender(self.queuesList, SteerMotor)
-        self.camera = messageHandlerSubscriber(self.queuesList, serialCamera, "lastOnly", True)
+        self.camera = messageHandlerSubscriber(self.queuesList, mainCamera, "lastOnly", True)
 
     def run(self):
         while self._running:
