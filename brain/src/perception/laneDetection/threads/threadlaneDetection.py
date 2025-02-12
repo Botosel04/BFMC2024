@@ -36,7 +36,11 @@ class threadlaneDetection(ThreadWithStop):
                 image = cv2.imdecode(img, cv2.IMREAD_COLOR)
 
                 steer_angle = get_steer(image)
+                steer_angle = steer_angle*2
+                if steer_angle > 250:
+                    steer_angle = 250
                 print(steer_angle)
+                self.steer.send(str(int(steer_angle)))
 
     def subscribe(self):
         """Subscribes to the messages you are interested in"""

@@ -4,7 +4,7 @@ import time
 import cv2
 import numpy as np
 from src.templates.threadwithstop import ThreadWithStop
-from src.utils.messages.allMessages import (DrivingMode, SpeedMotor, SteerMotor, mainCamera, serialCamera)
+from src.utils.messages.allMessages import (DrivingMode, SpeedMotor, SteerMotor)
 from src.utils.messages.messageHandlerSubscriber import messageHandlerSubscriber
 from src.utils.messages.messageHandlerSender import messageHandlerSender
 class threadmove(ThreadWithStop):
@@ -24,36 +24,19 @@ class threadmove(ThreadWithStop):
 
         self.speed = messageHandlerSender(self.queuesList, SpeedMotor)
         self.driving_mode = messageHandlerSubscriber(self.queuesList, DrivingMode, "lastOnly", True)
-        self.camera = messageHandlerSubscriber(self.queuesList, serialCamera, "lastOnly", True)
 
         self.driveState = True
 
     def run(self):
         while self._running:
             drv = self.driving_mode.receive()
-            cam = self.camera.receive()
             if drv is not None:
                 if drv == "auto":
-                    self.speed.send("200")
+                    self.speed.send("100")
                     print("Driving mode set to auto")
                 elif drv in ["manual", "legacy", "stop"]:
                     self.speed.send("0")
                     print("Driving mode changed from auto")
-
-            cam = None
-            if cam is not None:
-                image_data = base64.b64decode(cam)
-                img = np.frombuffer(image_data, dtype=np.uint8)
-                image = cv2.imdecode(img, cv2.IMREAD_COLOR)
-                nrPix = self.countRedPixels(image)
-                height, width, channels = image.shape
-                MP = height*width
-                if nrPix > MP/3 and self.driveState:
-                    self.speed.send("0")
-                    self.driveState = False
-                elif not nrPix > MP/3 and self.driveState == False:
-                    self.speed.send("200")
-                    self.driveState = True
                     
 
 
