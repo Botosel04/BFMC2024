@@ -44,7 +44,7 @@ def compute_steering_angle(frame, lines, max_angle=30):
 
     steering_angle = max(-max_angle, min(max_angle, angle_degree))
 
-    return -(steering_angle*200/30)
+    return -(steering_angle*250/30)
 
 def make_coordinates(image, line_parameters):
     slope, intercept = line_parameters
