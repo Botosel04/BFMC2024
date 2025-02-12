@@ -23,7 +23,6 @@ class threadmove(ThreadWithStop):
         super(threadmove, self).__init__()
 
         self.speed = messageHandlerSender(self.queuesList, SpeedMotor)
-        self.steer = messageHandlerSender(self.queuesList, SteerMotor)
         self.driving_mode = messageHandlerSubscriber(self.queuesList, DrivingMode, "lastOnly", True)
         self.camera = messageHandlerSubscriber(self.queuesList, serialCamera, "lastOnly", True)
 
@@ -36,10 +35,8 @@ class threadmove(ThreadWithStop):
             if drv is not None:
                 if drv == "auto":
                     self.speed.send("200")
-                    self.steer.send("-250")
                     print("Driving mode set to auto")
                 elif drv in ["manual", "legacy", "stop"]:
-                    self.steer.send("0")
                     self.speed.send("0")
                     print("Driving mode changed from auto")
 
@@ -52,11 +49,9 @@ class threadmove(ThreadWithStop):
                 height, width, channels = image.shape
                 MP = height*width
                 if nrPix > MP/3 and self.driveState:
-                    self.steer.send("0")
                     self.speed.send("0")
                     self.driveState = False
                 elif not nrPix > MP/3 and self.driveState == False:
-                    self.steer.send("-230")
                     self.speed.send("200")
                     self.driveState = True
                     
