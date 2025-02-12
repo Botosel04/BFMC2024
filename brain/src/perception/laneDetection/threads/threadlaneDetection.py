@@ -6,7 +6,7 @@ from src.templates.threadwithstop import ThreadWithStop
 from src.utils.messages.allMessages import (SteerMotor, mainCamera, serialCamera)
 from src.utils.messages.messageHandlerSubscriber import messageHandlerSubscriber
 from src.utils.messages.messageHandlerSender import messageHandlerSender
-from lane_detection import get_steer
+from src.perception.laneDetection.lane_detection import get_steer
 
 class threadlaneDetection(ThreadWithStop):
     """This thread handles laneDetection.
