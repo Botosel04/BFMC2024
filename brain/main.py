@@ -43,6 +43,7 @@
 import sys
 import subprocess
 
+from brain.src.perception.laneDetection import processlaneDetection
 from src.movement.move.processmove import processmove
 
 sys.path.append(".")
@@ -81,6 +82,7 @@ Semaphores = False
 TrafficCommunication = False
 SerialHandler = True
 Movement = True
+Perception = True
 
 # ------ New component flags starts here ------#
  
@@ -126,6 +128,10 @@ if SerialHandler:
 if Movement:
     processMovement = processmove(queueList, logging, debugging = False)
     allProcesses.append(processMovement)
+
+if Perception:
+    processLaneDetection = processlaneDetection(queueList, logging, debugging = False)
+    allProcesses.append(processLaneDetection)
 
 # ------ New component runs starts here ------#
  
