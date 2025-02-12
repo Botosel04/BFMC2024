@@ -43,7 +43,7 @@
 import sys
 import subprocess
 
-from brain.src.perception.laneDetection import processlaneDetection
+from src.perception.laneDetection import processlaneDetection
 from src.movement.move.processmove import processmove
 
 sys.path.append(".")
