@@ -108,10 +108,10 @@ def region_of_interest(image):
 def get_steer(image):
     canny_image = canny(image)
     cropped_image = region_of_interest(canny_image)
-    lines = cv2.HoughLinesP(cropped_image, 2, np.pi / 180, 200, np.array([]), minLineLength=100, maxLineGap=30)
+    lines = cv2.HoughLinesP(cropped_image, 2, np.pi / 180, 100, np.array([]), minLineLength=100, maxLineGap=30)
     averaged_lines = average_slope_intercept(image, lines)
     steering_angle = compute_steering_angle(image, averaged_lines)
     smoothed = update_smoothed_angle(steering_angle, alpha=0.2)
-    final_angle = apply_deadzone(smoothed, threshold=5)
+    final_angle = apply_deadzone(smoothed, threshold=100)
     return final_angle
 
