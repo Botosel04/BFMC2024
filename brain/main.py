@@ -43,7 +43,7 @@
 import sys
 import subprocess
 
-from src.perception.laneDetection import processlaneDetection
+from src.perception.laneDetection.processlaneDetection import processlaneDetection
 from src.movement.move.processmove import processmove
 
 sys.path.append(".")
