@@ -32,8 +32,7 @@ class threadmove(ThreadWithStop):
     def run(self):
         while self._running:
             drv = self.driving_mode.receive()
-            #cam = self.camera.receive()
-            cam = None
+            cam = self.camera.receive()
             if drv is not None:
                 if drv == "auto":
                     self.speed.send("200")
@@ -44,6 +43,7 @@ class threadmove(ThreadWithStop):
                     self.speed.send("0")
                     print("Driving mode changed from auto")
 
+            cam = None
             if cam is not None:
                 image_data = base64.b64decode(cam)
                 img = np.frombuffer(image_data, dtype=np.uint8)
