@@ -36,10 +36,10 @@ class threadlaneDetection(ThreadWithStop):
                 img = np.frombuffer(image_data, dtype=np.uint8)
                 image = cv2.imdecode(img, cv2.IMREAD_COLOR)
 
-                img, steer_angle = get_steer(image)
-                img = cv2.imencode(".jpg", img)
-                img = base64.b64encode(img).decode("utf-8")
-                self.processedCamera.send(img)
+                steer_angle, processed_image = get_steer(processed_image)
+                processed_image_jpg = cv2.imencode(".jpg", img)
+                processed_image_bytes = base64.b64encode(processed_image_jpg).decode("utf-8")
+                self.processedCamera.send(processed_image_bytes)
                 print(steer_angle)
                 self.steer.send(str(int(steer_angle)))
 

@@ -212,5 +212,5 @@ def get_steer(image):
     line_image = display_lines(image, averaged_lines)
     combo_image = cv2.addWeighted(image, 0.8, line_image, 1, 1)
 
-    return combo_image, final_angle
+    return final_angle, combo_image
 
