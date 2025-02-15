@@ -30,7 +30,7 @@ import { Injectable } from '@angular/core';
 import { Socket } from 'ngx-socket-io';
 import { Observable, Subject } from 'rxjs';
 @Injectable({
- providedIn: 'root',
+  providedIn: 'root',
 })
 export class WebSocketService {
   private webSocket: Socket;
@@ -51,17 +51,17 @@ export class WebSocketService {
     'response',
     'BatteryLvl',
     'ResourceMonitor',
-    'serialCamera',
+    'processedCamera',
     'Recording',
     'CurrentSpeed',
     'CurrentSteer',
     'EnableButton'
   ]);
-  
- constructor() {
+
+  constructor() {
     this.webSocket = new Socket({
-    url: "http://192.168.137.250:5005",
-    options: {},
+      url: "http://192.168.137.250:5005",
+      options: {},
     });
 
     // Listen for all messages from the WebSocket server
@@ -98,7 +98,7 @@ export class WebSocketService {
     return this.webSocket.fromEvent('ImuData');
   }
 
-  receiveResourceMonitor(): Observable<any>{
+  receiveResourceMonitor(): Observable<any> {
     return this.webSocket.fromEvent('ResourceMonitor');
   }
 
@@ -117,7 +117,7 @@ export class WebSocketService {
 
   // Method to receive image updates
   receiveCamera(): Observable<any> {
-    return this.webSocket.fromEvent('serialCamera');
+    return this.webSocket.fromEvent('processedCamera');
   }
 
   // Method to receive location updates

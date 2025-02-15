@@ -245,3 +245,10 @@ class WarningSignal(Enum):
     msgType = "str"
 
 ### It will have this format: {"WarningName":"name1", "WarningID": 1}
+
+class processedCamera(Enum):
+    Queue = "General"
+    Owner = "laneDetection"
+    msgID = 1
+    msgType = "str"
+

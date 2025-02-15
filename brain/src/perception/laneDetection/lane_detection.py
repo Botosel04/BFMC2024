@@ -177,6 +177,28 @@ def simple_steering_angle(frame, lines, max_angle=30):
     steering_angle = normalized_error * max_angle
     return steering_angle
 #####################################################################################
+def display_lines(image, lines):
+    line_image = np.zeros_like(image)
+    if lines is not None:
+        for line in lines:
+            # Skip if line is None
+            if line is None:
+                continue
+            try:
+                # Ensure line is a numpy array
+                line = np.array(line)
+                # Check if we have exactly four elements
+                if line.size != 4:
+                    print("Skipping line due to unexpected shape:", line)
+                    continue
+                # Convert to integers
+                x1, y1, x2, y2 = map(int, line.flatten())
+                # Draw the line
+                cv2.line(line_image, (x1, y1), (x2, y2), (0, 0, 255), 10)
+            except Exception as e:
+                print("Error drawing line:", line, e)
+                continue
+    return line_image
 
 def get_steer(image):
     canny_image = canny(image)
@@ -186,5 +208,9 @@ def get_steer(image):
     steering_angle = compute_steering_angle(image, averaged_lines)
     smoothed = update_smoothed_angle(steering_angle, alpha=0.2)
     final_angle = apply_deadzone(smoothed, threshold=3)
-    return final_angle
+    # TODO: remove this during competition
+    line_image = display_lines(image, averaged_lines)
+    combo_image = cv2.addWeighted(image, 0.8, line_image, 1, 1)
+
+    return combo_image, final_angle
 
