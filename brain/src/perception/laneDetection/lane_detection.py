@@ -44,7 +44,7 @@ def compute_steering_angle(frame, lines, max_angle=25):
 
     steering_angle = max(-max_angle, min(max_angle, angle_degree))
 
-    return -steering_angle*10
+    return -steering_angle*7
 
 def make_coordinates(image, line_parameters):
     slope, intercept = line_parameters
@@ -104,6 +104,79 @@ def region_of_interest(image):
     cv2.fillPoly(mask, polygons, 255)
     masked_image = cv2.bitwise_and(image, mask)
     return masked_image
+
+
+# Cenipili
+##########################################################################
+def compute_vanishing_point_angle(frame, lines):
+    """
+    Computes the steering angle (in degrees) using the vanishing point method.
+    If both lane lines are detected, it computes their intersection (vanishing point)
+    and then computes the angle between the vertical line (from bottom center of frame)
+    and the line connecting bottom center to the vanishing point.
+    
+    If only one line is detected, it falls back to a simpler method.
+    """
+    height, width, _ = frame.shape
+
+    # Fallback if no line is detected.
+    if lines is None or len(lines) == 0:
+        return 0
+
+    # When two lane lines are detected, compute their intersection.
+    if len(lines) >= 2:
+        # Assume the first two lines are the left and right lanes.
+        # (You might want to refine how you choose these.)
+        left_line = lines[0]
+        right_line = lines[1]
+
+        # Fit each line to y = m*x + b using its endpoints.
+        # For left_line: (x1, y1, x2, y2)
+        m1, b1 = np.polyfit([left_line[0], left_line[2]], [left_line[1], left_line[3]], 1)
+        m2, b2 = np.polyfit([right_line[0], right_line[2]], [right_line[1], right_line[3]], 1)
+
+        # To find the intersection:
+        # m1*x + b1 = m2*x + b2  ->  x = (b2 - b1) / (m1 - m2)
+        if (m1 - m2) == 0:
+            # Parallel lines; fallback to simple method.
+            return simple_steering_angle(frame, lines)
+        x_intersect = (b2 - b1) / (m1 - m2)
+        y_intersect = m1 * x_intersect + b1
+
+        # The vanishing point is (x_intersect, y_intersect)
+        # Bottom center of frame (assumed car's current heading) is:
+        bottom_center = (width / 2, height)
+
+        # Compute offsets from bottom center to the vanishing point:
+        dx = x_intersect - bottom_center[0]
+        dy = bottom_center[1] - y_intersect  # note: y decreases as we go up
+
+        # Compute angle using arctan: a positive angle means steering right, negative means left.
+        angle_rad = np.arctan2(dx, dy)
+        angle_deg = np.degrees(angle_rad)
+        return angle_deg
+
+    else:
+        # If only one line is detected, fallback to a simpler method.
+        return simple_steering_angle(frame, lines)
+
+
+def simple_steering_angle(frame, lines, max_angle=30):
+    """
+    Fallback method: when only one lane line is detected, use its bottom position relative to
+    the image center to compute an angle.
+    """
+    height, width, _ = frame.shape
+    line = lines[0]
+    x1, y1, x2, y2 = line
+    bottom_x = x1 if y1 > y2 else x2
+    lane_center = bottom_x
+    frame_center = width / 2.0
+    error_pixels = lane_center - frame_center
+    normalized_error = error_pixels / (width / 2.0)
+    steering_angle = normalized_error * max_angle
+    return steering_angle
+#####################################################################################
 
 def get_steer(image):
     canny_image = canny(image)
