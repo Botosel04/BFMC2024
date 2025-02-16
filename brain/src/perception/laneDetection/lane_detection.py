@@ -2,11 +2,12 @@ import cv2
 import numpy as np
 import math
 
-leftpoint = -100
+## leftpoint = -100
+leftpoint = -20
 ## rightpoint = 2100
-rightpoint = 612
+rightpoint = 532
 ## toppoint = 1000, 250
-toppoint = 256, 64
+toppoint = 256, 35
 smoothed_angle = 0.0
 
 def apply_deadzone(angle, threshold=5):
