@@ -213,7 +213,7 @@ def get_steer(image):
     steering_angle = compute_steering_angle(image, averaged_lines)
     smoothed = update_smoothed_angle(steering_angle, alpha=0.2)
     ## final_angle = apply_deadzone(smoothed, threshold=3)
-    final_angle = apply_deadzone(smoothed, threshold=30)
+    final_angle = apply_deadzone(smoothed, threshold=10)
     # TODO: remove this during competition
     line_image = display_lines(image, averaged_lines)
     combo_image = cv2.addWeighted(image, 0.8, line_image, 1, 1)
