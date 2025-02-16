@@ -3,8 +3,10 @@ import numpy as np
 import math
 
 leftpoint = -100
-rightpoint = 2100
-toppoint = 1000, 250
+## rightpoint = 2100
+rightpoint = 612
+## toppoint = 1000, 250
+toppoint = 256, 64
 smoothed_angle = 0.0
 
 def apply_deadzone(angle, threshold=5):
@@ -44,7 +46,7 @@ def compute_steering_angle(frame, lines, max_angle=25):
 
     steering_angle = max(-max_angle, min(max_angle, angle_degree))
 
-    return -steering_angle*7
+    return -(steering_angle*250/25)
 
 def make_coordinates(image, line_parameters):
     slope, intercept = line_parameters
@@ -203,11 +205,13 @@ def display_lines(image, lines):
 def get_steer(image):
     canny_image = canny(image)
     cropped_image = region_of_interest(canny_image)
-    lines = cv2.HoughLinesP(cropped_image, 2, np.pi / 180, 300, np.array([]), minLineLength=100, maxLineGap=30)
+    ## lines = cv2.HoughLinesP(cropped_image, 2, np.pi / 180, 300, np.array([]), minLineLength=100, maxLineGap=30)
+    lines = cv2.HoughLinesP(cropped_image, 2, np.pi / 180, 100, np.array([]), minLineLength=50, maxLineGap=30)
     averaged_lines = average_slope_intercept(image, lines)
     steering_angle = compute_steering_angle(image, averaged_lines)
     smoothed = update_smoothed_angle(steering_angle, alpha=0.2)
-    final_angle = apply_deadzone(smoothed, threshold=3)
+    ## final_angle = apply_deadzone(smoothed, threshold=3)
+    final_angle = apply_deadzone(smoothed, threshold=30)
     # TODO: remove this during competition
     line_image = display_lines(image, averaged_lines)
     combo_image = cv2.addWeighted(image, 0.8, line_image, 1, 1)
