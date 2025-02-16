@@ -140,7 +140,7 @@ class threadCamera(ThreadWithStop):
                             "output_video" + str(time.time()) + ".avi",
                             fourcc,
                             self.frame_rate,
-                            (2048, 1080),
+                            (512, 270),
                         )
 
             except Exception as e:
