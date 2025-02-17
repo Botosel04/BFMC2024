@@ -38,7 +38,7 @@ def compute_steering_angle(frame, lines, max_angle=30):
         x1, y1, x2, y2 = line
         bottom_x = x1 if y1 > y2 else x2
         lane_center = 0
-        if bottom_x < width/2:
+        if bottom_x > width/2:
             lane_center = width/2 + bottom_x
         else:
             lane_center = bottom_x - width/2
