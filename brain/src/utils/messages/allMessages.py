@@ -256,4 +256,4 @@ class laneDetectionSteering(Enum):
     Queue = "General"
     Owner = "laneDetection"
     msgID = 2
-    msgType = "int"
+    msgType = "str"
