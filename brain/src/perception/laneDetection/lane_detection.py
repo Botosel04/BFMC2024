@@ -3,11 +3,11 @@ import numpy as np
 import math
 
 ## leftpoint = -100
-leftpoint = -50
+leftpoint = -60
 ## rightpoint = 2100
-rightpoint = 562
+rightpoint = 572
 ## toppoint = 1000, 250
-toppoint = 256, 15
+toppoint = 256, 60
 smoothed_angle = 0.0
 
 def apply_deadzone(angle, threshold=5):
