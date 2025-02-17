@@ -43,10 +43,11 @@ def compute_steering_angle(frame, lines, max_angle=30):
         else:
             lane_center = 0
         #lane_center = bottom_x
-    print("err: " + str(error_pixels))
+    
 
     frame_center = width / 2.0
     error_pixels = lane_center - frame_center
+    print("err: " + str(error_pixels))
 
     angle_radian = math.atan(error_pixels / height)
     angle_degree = angle_radian * 180.0 / math.pi
