@@ -27,6 +27,7 @@ class threadmove(ThreadWithStop):
         self.driving_mode = messageHandlerSubscriber(self.queuesList, DrivingMode, "lastOnly", True)
         self.lane_detection_steering = messageHandlerSubscriber(self.queuesList, laneDetectionSteering, "lastOnly", True)
 
+        self.driveMode = "stop"
         self.driveState = True
 
     def run(self):
@@ -34,15 +35,18 @@ class threadmove(ThreadWithStop):
             drv = self.driving_mode.receive()
             if drv is not None:
                 if drv == "auto":
-                    steer_angle = self.lane_detection_steering.receive()
-                    if steer_angle:
-                        self.steer.send(steer_angle)
                     self.speed.send("100")
+                    self.driveMode = drv
                     print("Driving mode set to auto")
                 elif drv in ["manual", "legacy", "stop"]:
                     self.speed.send("0")
                     self.steer.send("0")
+                    self.driveMode = drv
                     print("Driving mode changed from auto")
+
+            steer_angle = self.lane_detection_steering.receive()
+            if steer_angle:
+                self.steer.send(steer_angle)
 
     def countRedPixels(self, image):
         hsv = cv2.cvtColor(image, cv2.COLOR_BGR2HSV)
