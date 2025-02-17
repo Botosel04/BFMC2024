@@ -97,7 +97,7 @@ def average_slope_intercept(lane_image, lines):
 def canny(image):
     gray = cv2.cvtColor(image, cv2.COLOR_RGB2GRAY)
     blur = cv2.GaussianBlur(gray, (5, 5), 0)
-    canny = cv2.Canny(blur, 150, 300)
+    canny = cv2.Canny(blur, 200, 300)
     return canny
 
 def region_of_interest(image):
@@ -208,7 +208,7 @@ def get_steer(image):
     cropped_image = region_of_interest(canny_image)
     ## lines = cv2.HoughLinesP(cropped_image, 2, np.pi / 180, 300, np.array([]), minLineLength=100, maxLineGap=30)
     #lines = cv2.HoughLinesP(cropped_image, 2, np.pi / 180, 100, np.array([]), minLineLength=50, maxLineGap=30)
-    lines = cv2.HoughLinesP(cropped_image, 2.3, np.pi / 180, 80, np.array([]), minLineLength=50, maxLineGap=30)
+    lines = cv2.HoughLinesP(cropped_image, 2, np.pi / 180, 80, np.array([]), minLineLength=60, maxLineGap=30)
     averaged_lines = average_slope_intercept(image, lines)
     steering_angle = compute_steering_angle(image, averaged_lines)
     smoothed = update_smoothed_angle(steering_angle, alpha=0.07)
