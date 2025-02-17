@@ -218,7 +218,7 @@ def get_steer(image):
     lines = cv2.HoughLinesP(cropped_image, 2, np.pi / 180, 80, np.array([]), minLineLength=60, maxLineGap=30)
     averaged_lines = average_slope_intercept(image, lines)
     steering_angle = compute_steering_angle(image, averaged_lines)
-    smoothed = update_smoothed_angle(steering_angle, alpha=0.07)
+    smoothed = update_smoothed_angle(steering_angle, alpha=0.3)
     ## final_angle = apply_deadzone(smoothed, threshold=3)
     final_angle = apply_deadzone(smoothed, threshold=10)
     final_angle = -(final_angle*250/30)
