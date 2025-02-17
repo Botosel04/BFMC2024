@@ -4,7 +4,7 @@ from src.templates.workerprocess import WorkerProcess
 from src.movement.move.threads.threadmove import threadmove
 
 class processmove(WorkerProcess):
-    """This process handles move.
+    """This process handles movement.
     Args:
         queueList (dictionary of multiprocessing.queues.Queue): Dictionary of queues where the ID is the type of messages.
         logging (logging object): Made for debugging.
