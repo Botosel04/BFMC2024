@@ -27,6 +27,8 @@ class threadlaneDetection(ThreadWithStop):
         self.steer = messageHandlerSender(self.queuesList, SteerMotor)
         self.camera = messageHandlerSubscriber(self.queuesList, serialCamera, "lastOnly", True)
 
+        self.last_angle = 0.0
+
     def run(self):
         while self._running:
             cam = self.camera.receive()
@@ -41,7 +43,10 @@ class threadlaneDetection(ThreadWithStop):
                 processed_image_bytes = base64.b64encode(processed_image_jpg).decode("utf-8")
                 self.processedCamera.send(processed_image_bytes)
                 print(steer_angle)
-                self.steer.send(str(int(steer_angle)))
+                if(abs(steer_angle - self.last_angle) > 10):
+                    self.steer.send(str(int(steer_angle)))
+                    self.last_angle = steer_angle
+                
 
     def subscribe(self):
         """Subscribes to the messages you are interested in"""
