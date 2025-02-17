@@ -4,7 +4,7 @@ import time
 import cv2
 import numpy as np
 from src.templates.threadwithstop import ThreadWithStop
-from src.utils.messages.allMessages import (DrivingMode, SpeedMotor, SteerMotor)
+from src.utils.messages.allMessages import (DrivingMode, SpeedMotor, SteerMotor, laneDetectionSteering)
 from src.utils.messages.messageHandlerSubscriber import messageHandlerSubscriber
 from src.utils.messages.messageHandlerSender import messageHandlerSender
 class threadmove(ThreadWithStop):
@@ -23,7 +23,9 @@ class threadmove(ThreadWithStop):
         super(threadmove, self).__init__()
 
         self.speed = messageHandlerSender(self.queuesList, SpeedMotor)
+        self.steer = messageHandlerSender(self.queuesList, SteerMotor)
         self.driving_mode = messageHandlerSubscriber(self.queuesList, DrivingMode, "lastOnly", True)
+        self.lane_detection_steering = messageHandlerSubscriber(self.queuesList, laneDetectionSteering, "lastOnly", True)
 
         self.driveState = True
 
@@ -32,13 +34,15 @@ class threadmove(ThreadWithStop):
             drv = self.driving_mode.receive()
             if drv is not None:
                 if drv == "auto":
+                    steer_angle = self.lane_detection_steering.receive()
+                    if steer_angle:
+                        self.steer.send(steer_angle)
                     self.speed.send("100")
                     print("Driving mode set to auto")
                 elif drv in ["manual", "legacy", "stop"]:
                     self.speed.send("0")
+                    self.steer.send("0")
                     print("Driving mode changed from auto")
-                    
-
 
     def countRedPixels(self, image):
         hsv = cv2.cvtColor(image, cv2.COLOR_BGR2HSV)

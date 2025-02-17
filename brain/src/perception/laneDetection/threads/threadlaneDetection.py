@@ -3,7 +3,7 @@ import base64
 import cv2
 import numpy as np
 from src.templates.threadwithstop import ThreadWithStop
-from src.utils.messages.allMessages import (SteerMotor, mainCamera, serialCamera, processedCamera)
+from src.utils.messages.allMessages import (laneDetectionSteering, mainCamera, serialCamera, processedCamera)
 from src.utils.messages.messageHandlerSubscriber import messageHandlerSubscriber
 from src.utils.messages.messageHandlerSender import messageHandlerSender
 from src.perception.laneDetection.lane_detection import get_steer
@@ -24,7 +24,7 @@ class threadlaneDetection(ThreadWithStop):
         self.subscribe()
         super(threadlaneDetection, self).__init__()
 
-        self.steer = messageHandlerSender(self.queuesList, SteerMotor)
+        self.steer = messageHandlerSender(self.queuesList, laneDetectionSteering)
         self.camera = messageHandlerSubscriber(self.queuesList, serialCamera, "lastOnly", True)
 
         self.last_angle = 0.0
@@ -43,10 +43,9 @@ class threadlaneDetection(ThreadWithStop):
                 processed_image_bytes = base64.b64encode(processed_image_jpg).decode("utf-8")
                 self.processedCamera.send(processed_image_bytes)
                 print(steer_angle)
-                if(abs(steer_angle - self.last_angle) > 10):
+                if abs(steer_angle - self.last_angle) > 10:
                     self.steer.send(str(int(steer_angle)))
                     self.last_angle = steer_angle
-                
 
     def subscribe(self):
         """Subscribes to the messages you are interested in"""

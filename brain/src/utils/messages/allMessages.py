@@ -252,3 +252,8 @@ class processedCamera(Enum):
     msgID = 1
     msgType = "str"
 
+class laneDetectionSteering(Enum):
+    Queue = "General"
+    Owner = "laneDetection"
+    msgID = 2
+    msgType = "int"
