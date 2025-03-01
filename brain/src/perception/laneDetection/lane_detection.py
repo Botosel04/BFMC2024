@@ -954,7 +954,7 @@ def getSteer(frame):
     #cv2.imshow("Lane Line Markings", lane_line_markings)
 
     # Plot the region of interest on the image
-    cv2.imshow("Region of Interest", lane_obj.plot_roi(frame=frame))
+    #cv2.imshow("Region of Interest", lane_obj.plot_roi(frame=frame))
 
     # Perform the perspective transform to generate a bird's eye view
     # If Plot == True, show image with new region of interest
@@ -986,7 +986,7 @@ def getSteer(frame):
         frame=frame_with_lane_lines, plot=False)
                     
     # Write the frame to the output video file
-    return(offset, frame)
+    return (offset, frame_with_lane_lines2)
 			
  
  
