@@ -298,8 +298,8 @@ class Lane:
     # Four corners of the trapezoid-shaped region of interest
     # You need to find these corners manually.
     self.roi_points = np.float32([
-      (int(0.35*width),int(0.544*height)), # Top-left corner
-      (int(width * 0.2), height * 0.7), # Bottom-left corner			
+      (int(0.3*width),int(0.544*height)), # Top-left corner
+      (int(width * 0.18), height * 0.7), # Bottom-left corner			
       (int(0.8*width),height * 0.7), # Bottom-right corner
       (int(0.7*width),int(0.544*height)) # Top-right corner
     ])
@@ -986,7 +986,7 @@ def getSteer(frame):
         frame=frame_with_lane_lines, plot=False)
                     
     # Write the frame to the output video file
-    return (offset, lane_obj.plot_roi(frame=frame))
+    return (offset, warped_frame)
 			
  
  
