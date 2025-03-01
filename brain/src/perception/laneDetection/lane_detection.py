@@ -986,7 +986,7 @@ def getSteer(frame):
         frame=frame_with_lane_lines, plot=False)
                     
     # Write the frame to the output video file
-    return (offset, frame_with_lane_lines2)
+    return (offset, lane_obj.plot_roi(frame=frame))
 			
  
  
