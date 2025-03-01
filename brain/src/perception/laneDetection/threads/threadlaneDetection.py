@@ -6,7 +6,7 @@ from src.templates.threadwithstop import ThreadWithStop
 from src.utils.messages.allMessages import (laneDetectionSteering, mainCamera, serialCamera, processedCamera)
 from src.utils.messages.messageHandlerSubscriber import messageHandlerSubscriber
 from src.utils.messages.messageHandlerSender import messageHandlerSender
-from src.perception.laneDetection.lane_detection import get_steer
+from src.perception.laneDetection.lane_detection import getSteer
 
 class threadlaneDetection(ThreadWithStop):
     """This thread handles laneDetection.
@@ -38,7 +38,8 @@ class threadlaneDetection(ThreadWithStop):
                 img = np.frombuffer(image_data, dtype=np.uint8)
                 image = cv2.imdecode(img, cv2.IMREAD_COLOR)
 
-                steer_angle, processed_image = get_steer(image)
+                steer_angle, processed_image = getSteer(image)
+                steer_angle = -steer_angle
                 _, processed_image_jpg = cv2.imencode(".jpg", processed_image)
                 processed_image_bytes = base64.b64encode(processed_image_jpg).decode("utf-8")
                 self.processedCamera.send(processed_image_bytes)
