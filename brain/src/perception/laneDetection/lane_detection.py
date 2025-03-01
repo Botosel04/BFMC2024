@@ -230,7 +230,7 @@
 
 import cv2 # Import the OpenCV library to enable computer vision
 import numpy as np # Import the NumPy scientific computing libraryw
-import matplotlib.pyplot as plt # Used for plotting and error checking
+#import matplotlib.pyplot as plt # Used for plotting and error checking
 
 # Author: Addison Sears-Collins
 # https://automaticaddison.com
@@ -425,6 +425,7 @@ class Lane:
     if plot == True:
 		
       # Draw both the image and the histogram
+      '''
       figure, (ax1, ax2) = plt.subplots(2,1) # 2 row, 1 columns
       figure.set_size_inches(10, 5)
       ax1.imshow(frame, cmap='gray')
@@ -433,6 +434,7 @@ class Lane:
       ax2.set_title("Histogram Peaks")
       plt.show()
       plt.close()
+      '''
 			
     return self.histogram
 
@@ -583,6 +585,7 @@ class Lane:
       result = cv2.addWeighted(out_img, 1, window_img, 0.3, 0)
       
       # Plot the figures 
+      '''
       figure, (ax1, ax2, ax3) = plt.subplots(3,1) # 3 rows, 1 column
       figure.set_size_inches(10, 10)
       figure.tight_layout(pad=3.0)
@@ -595,6 +598,7 @@ class Lane:
       ax2.set_title("Warped Frame")
       ax3.set_title("Warped Frame With Search Window")
       plt.show()
+      '''
 			
   def get_lane_line_indices_sliding_windows(self, plot=False):
     """
@@ -734,6 +738,7 @@ class Lane:
         0, 0, 255]
 				
       # Plot the figure with the sliding windows
+      '''
       figure, (ax1, ax2, ax3) = plt.subplots(3,1) # 3 rows, 1 column
       figure.set_size_inches(10, 10)
       figure.tight_layout(pad=3.0)
@@ -746,6 +751,7 @@ class Lane:
       ax2.set_title("Warped Frame with Sliding Windows")
       ax3.set_title("Detected Lane Lines with Sliding Windows")
       plt.show()  		
+      '''
 			
     return self.left_fit, self.right_fit
 
@@ -855,6 +861,7 @@ class Lane:
     if plot==True:
      
       # Plot the figures 
+      '''
       figure, (ax1, ax2) = plt.subplots(2,1) # 2 rows, 1 column
       figure.set_size_inches(10, 10)
       figure.tight_layout(pad=3.0)
@@ -863,6 +870,7 @@ class Lane:
       ax1.set_title("Original Frame")  
       ax2.set_title("Original Frame With Lane Overlay")
       plt.show()   
+      '''
 
     return result			
 	
