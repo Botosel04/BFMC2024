@@ -303,8 +303,8 @@ class Lane:
     # You need to find these corners manually.
     self.roi_points = np.float32([
       (int(0.35*width),int(0.544*height)), # Top-left corner
-      (int(width * 0.2), height * 0.7), # Bottom-left corner			
-      (int(0.8*width),height * 0.7), # Bottom-right corner
+      (int(width * 0.2), height - 1), # Bottom-left corner			
+      (int(0.8*width),height - 1), # Bottom-right corner
       (int(0.7*width),int(0.544*height)) # Top-right corner
     ])
 		
