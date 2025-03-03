@@ -282,6 +282,9 @@ class Lane:
     # This will hold an image with the lane lines		
     self.lane_line_markings = None
 
+    self.rightx_offset = 305
+    self.leftx_offset = 205
+
     # This will hold the image after perspective transformation
     self.warped_frame = None
     self.transformation_matrix = None
@@ -529,7 +532,7 @@ class Lane:
     prev_right_fit2.append(right_fit)
 
     # Calculate the moving average	
-    if len(prev_left_fit2) > 10:
+    if len(prev_left_fit2) > 5:
       prev_left_fit2.pop(0)
       prev_right_fit2.pop(0)
       left_fit = sum(prev_left_fit2) / len(prev_left_fit2)
@@ -625,6 +628,7 @@ class Lane:
     # Current positions for pixel indices for each window,
     # which we will continue to update
     leftx_base, rightx_base = self.histogram_peak()
+  
     leftx_current = leftx_base
     rightx_current = rightx_base
 
@@ -661,9 +665,20 @@ class Lane:
       minpix = self.minpix
       if len(good_left_inds) > minpix:
         leftx_current = np.int32(np.mean(nonzerox[good_left_inds]))
+      else:
+         print("nu e detectata stanga")
+         rightx_avg = np.int32(np.mean(nonzerox[good_right_inds]))
+         leftx_current = rightx_avg - 160
+        
+      
       if len(good_right_inds) > minpix:        
         rightx_current = np.int32(np.mean(nonzerox[good_right_inds]))
-					
+      else:
+        print("nu e detectata dreapta")
+        leftx_avg = np.int32(np.mean(nonzerox[good_left_inds]))
+        rightx_current = leftx_avg + 160
+       
+     
     # Concatenate the arrays of indices
     left_lane_inds = np.concatenate(left_lane_inds)
     right_lane_inds = np.concatenate(right_lane_inds)
@@ -701,7 +716,7 @@ class Lane:
     prev_right_fit.append(right_fit)
 
     # Calculate the moving average	
-    if len(prev_left_fit) > 10:
+    if len(prev_left_fit) > 5:
       prev_left_fit.pop(0)
       prev_right_fit.pop(0)
       left_fit = sum(prev_left_fit) / len(prev_left_fit)
@@ -746,7 +761,6 @@ class Lane:
       ax2.set_title("Warped Frame with Sliding Windows")
       ax3.set_title("Detected Lane Lines with Sliding Windows")
       plt.show()  		
-			
     return self.left_fit, self.right_fit
 
   def get_line_markings(self, frame=None):
@@ -816,9 +830,10 @@ class Lane:
     Return the x coordinate of the left histogram peak and the right histogram
     peak.
     """
-    midpoint = np.int32(self.histogram.shape[0]/2)
-    leftx_base = np.argmax(self.histogram[:midpoint])
-    rightx_base = np.argmax(self.histogram[midpoint:]) + midpoint
+    left_histogram = self.histogram[:self.leftx_offset]
+    leftx_base = np.argmax(left_histogram) 
+    right_histogram = self.histogram[self.rightx_offset:] 
+    rightx_base = np.argmax(right_histogram) + self.rightx_offset
 
     # (x coordinate of left peak, x coordinate of right peak)
     return leftx_base, rightx_base
@@ -946,7 +961,7 @@ def getSteer(frame):
     #cv2.imshow("Lane Line Markings", lane_line_markings)
 
     # Plot the region of interest on the image
-    cv2.imshow("Region of Interest", lane_obj.plot_roi(frame=frame))
+    #cv2.imshow("Region of Interest", lane_obj.plot_roi(frame=frame))
 
     # Perform the perspective transform to generate a bird's eye view
     # If Plot == True, show image with new region of interest
