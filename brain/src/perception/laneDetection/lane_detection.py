@@ -264,7 +264,7 @@ prev_right_fit2 = []
 def canny(image):
     gray = cv2.cvtColor(image, cv2.COLOR_RGB2GRAY)
     blur = cv2.GaussianBlur(gray, (5, 5), 0)
-    canny = cv2.Canny(blur, 100, 200)
+    canny = cv2.Canny(blur, 50, 150)
     return canny
 
 class Lane:
@@ -951,7 +951,7 @@ class Lane:
 
   
 	
-def getSteer(frame):
+def getSteer1(frame):
   # Process the video
     width = int(frame.shape[1] * scale_ratio)
     height = int(frame.shape[0] * scale_ratio)
@@ -1004,3 +1004,9 @@ def getSteer(frame):
  
  
 
+def getSteer(frame):
+  try:
+    return getSteer1(frame)
+  except any:
+    print("whatev")
+    return 0
