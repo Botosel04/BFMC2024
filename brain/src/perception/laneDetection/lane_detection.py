@@ -514,13 +514,32 @@ class Lane:
     global prev_righty2
     global prev_left_fit2
     global prev_right_fit2
-		
-    # Make sure we have nonzero pixels		
-    if len(leftx)==0 or len(lefty)==0 or len(rightx)==0 or len(righty)==0:
-      leftx = prev_leftx2
-      lefty = prev_lefty2
-      rightx = prev_rightx2
-      righty = prev_righty2
+
+    LANE_WIDTH_PIXELS = 300  # You may need to fine-tune this for your camera setup
+
+    if len(leftx) == 0 or len(lefty) == 0:
+        print("Left lane missing, inferring from right lane")
+        if right_fit is not None:
+            # Infer left_fit by shifting right_fit
+            left_fit = np.copy(right_fit)
+            left_fit[2] -= LANE_WIDTH_PIXELS
+            # Create synthetic left lane pixels (optional, to keep continuity)
+            leftx = prev_leftx
+            lefty = prev_lefty
+        else:
+            leftx = prev_leftx
+            lefty = prev_lefty
+
+    if len(rightx) == 0 or len(righty) == 0:
+        print("Right lane missing, inferring from left lane")
+        if left_fit is not None:
+            right_fit = np.copy(left_fit)
+            right_fit[2] += LANE_WIDTH_PIXELS
+            rightx = prev_rightx
+            righty = prev_righty
+        else:
+            rightx = prev_rightx
+            righty = prev_righty
 
     self.leftx = leftx
     self.rightx = rightx
@@ -707,11 +726,31 @@ class Lane:
     global prev_right_fit
 
     # Make sure we have nonzero pixels		
-    if len(leftx)==0 or len(lefty)==0 or len(rightx)==0 or len(righty)==0:
-      leftx = prev_leftx
-      lefty = prev_lefty
-      rightx = prev_rightx
-      righty = prev_righty
+    LANE_WIDTH_PIXELS = 300  # You may need to fine-tune this for your camera setup
+
+    if len(leftx) == 0 or len(lefty) == 0:
+        print("Left lane missing, inferring from right lane")
+        if right_fit is not None:
+            # Infer left_fit by shifting right_fit
+            left_fit = np.copy(right_fit)
+            left_fit[2] -= LANE_WIDTH_PIXELS
+            # Create synthetic left lane pixels (optional, to keep continuity)
+            leftx = prev_leftx
+            lefty = prev_lefty
+        else:
+            leftx = prev_leftx
+            lefty = prev_lefty
+
+    if len(rightx) == 0 or len(righty) == 0:
+        print("Right lane missing, inferring from left lane")
+        if left_fit is not None:
+            right_fit = np.copy(left_fit)
+            right_fit[2] += LANE_WIDTH_PIXELS
+            rightx = prev_rightx
+            righty = prev_righty
+        else:
+            rightx = prev_rightx
+            righty = prev_righty
 		
     left_fit = np.polyfit(lefty, leftx, 2)
     right_fit = np.polyfit(righty, rightx, 2) 
