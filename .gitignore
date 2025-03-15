@@ -4,3 +4,4 @@ __pycache__/
 brain/historyFile.txt
 brain/src/dashboard/frontend/node_modules/*
 brain/src/dashboard/frontend/.angular/cache/*
+env

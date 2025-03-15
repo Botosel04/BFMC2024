@@ -47,7 +47,7 @@ class threadlaneDetection(ThreadWithStop):
                 _, processed_image_jpg = cv2.imencode(".jpg", processed_image)
                 processed_image_bytes = base64.b64encode(processed_image_jpg).decode("utf-8")
                 self.processedCamera.send(processed_image_bytes)
-                print(steer_angle)
+                # print(steer_angle)
                 if abs(steer_angle - self.last_angle) > 10:
                     self.steer.send(str(int(steer_angle)))
                     self.last_angle = steer_angle

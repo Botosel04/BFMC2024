@@ -2,9 +2,11 @@ from src.templates.threadwithstop import ThreadWithStop
 from src.utils.messages.allMessages import (mainCamera, serialCamera)
 from src.utils.messages.messageHandlerSubscriber import messageHandlerSubscriber
 from src.utils.messages.messageHandlerSender import messageHandlerSender
-from src.perception.ultralytics.models import YOLO
 import base64
 import numpy as np
+print("wha")
+from ultralytics import YOLO
+print("whaaaaaaa")
 class threadsignDetection(ThreadWithStop):
     """This thread handles signDetection.
     Args:
@@ -17,13 +19,13 @@ class threadsignDetection(ThreadWithStop):
         self.queuesList = queueList
         self.logging = logging
         self.debugging = debugging
-        self.subscribe()
         super(threadsignDetection, self).__init__()
 
         self.camera = messageHandlerSubscriber(self.queuesList, mainCamera, "lastOnly", True)
 
         self.frameCount = 0
 
+        print("helo")
         self.model = YOLO("src/perception/models/best_ncnn_model")
 
     def run(self):

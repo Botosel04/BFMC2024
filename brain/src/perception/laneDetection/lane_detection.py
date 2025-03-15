@@ -289,7 +289,7 @@ class Lane:
     LANE_WIDTH_PIXELS = 300  # You may need to fine-tune this for your camera setup
 
     if len(leftx) == 0 or len(lefty) == 0:
-        print("Left lane missing, inferring from right lane")
+        # # print("Left lane missing, inferring from right lane")
         if right_fit is not None:
             # Infer left_fit by shifting right_fit
             left_fit = np.copy(right_fit)
@@ -302,7 +302,7 @@ class Lane:
             lefty = prev_lefty
 
     if len(rightx) == 0 or len(righty) == 0:
-        print("Right lane missing, inferring from left lane")
+        # # print("Right lane missing, inferring from left lane")
         if left_fit is not None:
             right_fit = np.copy(left_fit)
             right_fit[2] += LANE_WIDTH_PIXELS
@@ -461,7 +461,7 @@ class Lane:
       if len(good_left_inds) > minpix:
         leftx_current = np.int32(np.mean(nonzerox[good_left_inds]))
       else:
-         print("nu e detectata stanga")
+         # print("nu e detectata stanga")
          rightx_avg = np.int32(np.mean(nonzerox[good_right_inds]))
          leftx_current = rightx_avg - 160
         
@@ -469,7 +469,7 @@ class Lane:
       if len(good_right_inds) > minpix:        
         rightx_current = np.int32(np.mean(nonzerox[good_right_inds]))
       else:
-        print("nu e detectata dreapta")
+        # print("nu e detectata dreapta")
         leftx_avg = np.int32(np.mean(nonzerox[good_left_inds]))
         rightx_current = leftx_avg + 160
        
@@ -500,7 +500,7 @@ class Lane:
     LANE_WIDTH_PIXELS = 300  # You may need to fine-tune this for your camera setup
 
     if len(leftx) == 0 or len(lefty) == 0:
-        print("Left lane missing, inferring from right lane")
+        # print("Left lane missing, inferring from right lane")
         if right_fit is not None:
             # Infer left_fit by shifting right_fit
             left_fit = np.copy(right_fit)
@@ -513,7 +513,7 @@ class Lane:
             lefty = prev_lefty
 
     if len(rightx) == 0 or len(righty) == 0:
-        print("Right lane missing, inferring from left lane")
+        # print("Right lane missing, inferring from left lane")
         if left_fit is not None:
             right_fit = np.copy(left_fit)
             right_fit[2] += LANE_WIDTH_PIXELS
