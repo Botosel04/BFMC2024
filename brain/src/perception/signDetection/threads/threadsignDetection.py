@@ -1,3 +1,4 @@
+import cv2
 from src.templates.threadwithstop import ThreadWithStop
 from src.utils.messages.allMessages import (mainCamera, serialCamera)
 from src.utils.messages.messageHandlerSubscriber import messageHandlerSubscriber
@@ -45,5 +46,6 @@ class threadsignDetection(ThreadWithStop):
 
                 image_data = base64.b64decode(cam)
                 img = np.frombuffer(image_data, dtype=np.uint8)
+                image = cv2.imdecode(img, cv2.IMREAD_COLOR)
 
-                print(self.model(img))
+                print(self.model(image))
