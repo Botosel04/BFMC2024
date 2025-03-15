@@ -2,9 +2,9 @@ from src.templates.threadwithstop import ThreadWithStop
 from src.utils.messages.allMessages import (mainCamera, serialCamera)
 from src.utils.messages.messageHandlerSubscriber import messageHandlerSubscriber
 from src.utils.messages.messageHandlerSender import messageHandlerSender
+from src.perception.ultralytics import YOLO
 import base64
 import numpy as np
-from ultralytics import YOLO
 class threadsignDetection(ThreadWithStop):
     """This thread handles signDetection.
     Args:
