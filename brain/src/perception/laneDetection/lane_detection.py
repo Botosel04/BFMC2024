@@ -9,7 +9,7 @@ import numpy as np # Import the NumPy scientific computing libraryw
 
 # Make sure the video file is in the same directory as your code
 filename = 'real-car.mp4'
-file_size = (1280,720) 
+file_size = (1280,720)
 scale_ratio = 1 # Option to scale to fraction of original size. 
 
 # We want to save the output to a video file
