@@ -28,6 +28,7 @@ class threadlaneDetection(ThreadWithStop):
         self.camera = messageHandlerSubscriber(self.queuesList, serialCamera, "lastOnly", True)
 
         self.last_angle = 0.0
+        self.frameCount = 0
 
     def run(self):
         while self._running:
@@ -39,17 +40,24 @@ class threadlaneDetection(ThreadWithStop):
                 image = cv2.imdecode(img, cv2.IMREAD_COLOR)
 
                 steer_angle, processed_image, no_of_lines = getSteer(image)
+
                 steer_angle = -steer_angle * 5
                 if steer_angle > 250:
                     steer_angle = 250
                 elif steer_angle < -250:
                     steer_angle = -250
+
                 _, processed_image_jpg = cv2.imencode(".jpg", processed_image)
                 processed_image_bytes = base64.b64encode(processed_image_jpg).decode("utf-8")
                 self.processedCamera.send(processed_image_bytes)
-                # print(steer_angle)
-                # print("No. of lines: ", no_of_lines)
-                if abs(steer_angle - self.last_angle) > 10:
+
+                self.frameCount += 1
+                if self.frameCount % 15 == 0:
+                    print(steer_angle)
+                    print("No. of lines: ", no_of_lines)
+                    self.frameCount = 0
+
+                if abs(steer_angle - self.last_angle) > 15:
                     self.steer.send(str(int(steer_angle)))
                     self.last_angle = steer_angle
 
