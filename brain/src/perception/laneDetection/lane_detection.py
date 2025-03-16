@@ -1,7 +1,8 @@
 
+import time
 import cv2 # Import the OpenCV library to enable computer vision
 import numpy as np # Import the NumPy scientific computing libraryw
-#import matplotlib.pyplot as plt # Used for plotting and error checking
+import matplotlib.pyplot as plt # Used for plotting and error checking
 
 # Author: Addison Sears-Collins
 # https://automaticaddison.com
@@ -70,15 +71,17 @@ class Lane:
     self.width = width
     self.height = height
 
+    self.not_left = 0
+    self.not_right = 0
     self.no_of_lines = 0
 	
     # Four corners of the trapezoid-shaped region of interest
     # You need to find these corners manually.
     self.roi_points = np.float32([
-      (int(0.35*width),int(0.544*height)), # Top-left corner
-      (int(width * 0.2), height - 1), # Bottom-left corner			
-      (int(0.8*width),height - 1), # Bottom-right corner
-      (int(0.7*width),int(0.544*height)) # Top-right corner
+      (int(0.25*width),int(0.544*height)), # Top-left corner
+      (int(width * 0.15), height - 1), # Bottom-left corner			
+      (int(0.85*width),height - 1), # Bottom-right corner
+      (int(0.75*width),int(0.544*height)) # Top-right corner
     ])
 		
     # The desired corner locations  of the region of interest
@@ -115,8 +118,8 @@ class Lane:
     self.righty = None
 		
     # Pixel parameters for x and y dimensions
-    self.YM_PER_PIX = 7.0 / 400 # meters per pixel in y dimension
-    self.XM_PER_PIX = 3.7 / 255 # meters per pixel in x dimension
+    self.YM_PER_PIX = 7.0 / width # meters per pixel in y dimension
+    self.XM_PER_PIX = 3.7 / height # meters per pixel in x dimension
 		
     # Radii of curvature and offset
     self.left_curvem = None
@@ -459,25 +462,32 @@ class Lane:
       right_lane_inds.append(good_right_inds)
         
       # If you found > minpix pixels, recenter next window on mean position
-      minpix = self.minpix
-      if len(good_left_inds) > minpix:
-        leftx_current = np.int32(np.mean(nonzerox[good_left_inds]))
-      else:
-         # print("nu e detectata stanga")
-         self.no_of_lines -= 1
-         rightx_avg = np.int32(np.mean(nonzerox[good_right_inds]))
-         leftx_current = rightx_avg - 160
+      try:
+        minpix = self.minpix
+        if len(good_left_inds) > minpix:
+          leftx_current = np.int32(np.mean(nonzerox[good_left_inds]))
+        else:
+          # print("nu e detectata stanga")
+          rightx_avg = np.int32(np.mean(nonzerox[good_right_inds]))
+          leftx_current = rightx_avg - 160
+      except any:
+        self.not_left = 1
         
-      
-      if len(good_right_inds) > minpix:        
-        rightx_current = np.int32(np.mean(nonzerox[good_right_inds]))
-      else:
-        # print("nu e detectata dreapta")
-        self.no_of_lines -= 1
-        leftx_avg = np.int32(np.mean(nonzerox[good_left_inds]))
-        rightx_current = leftx_avg + 160
-       
-     
+      try:
+        if len(good_right_inds) > minpix:        
+          rightx_current = np.int32(np.mean(nonzerox[good_right_inds]))
+        else:
+          # print("nu e detectata dreapta")
+          leftx_avg = np.int32(np.mean(nonzerox[good_left_inds]))
+          rightx_current = leftx_avg + 160
+      except any:
+        self.not_right = 1
+
+    self.no_of_lines = 2
+    if self.not_right:
+      self.no_of_lines -= 1
+    if self.not_left:
+      self.not_of_lines -= 1
     # Concatenate the arrays of indices
     left_lane_inds = np.concatenate(left_lane_inds)
     right_lane_inds = np.concatenate(right_lane_inds)
@@ -765,7 +775,7 @@ class Lane:
 
   
 	
-def getSteer1(frame):
+def getSteer1(frame, plot=False):
   # Process the video
     width = int(frame.shape[1] * scale_ratio)
     height = int(frame.shape[0] * scale_ratio)
@@ -782,7 +792,7 @@ def getSteer1(frame):
     #cv2.imshow("Lane Line Markings", lane_line_markings)
 
     # Plot the region of interest on the image
-    #cv2.imshow("Region of Interest", lane_obj.plot_roi(frame=frame))
+    cv2.imshow("Region of Interest", lane_obj.plot_roi(frame=frame))
 
     # Perform the perspective transform to generate a bird's eye view
     # If Plot == True, show image with new region of interest
@@ -813,7 +823,7 @@ def getSteer1(frame):
         
     # Display curvature and center offset on image
     frame_with_lane_lines2 = lane_obj.display_curvature_offset(
-        frame=frame_with_lane_lines, plot=False)
+        frame=frame_with_lane_lines, plot=True)
                     
     # Write the frame to the output video file
     return (offset, warped_frame, lane_obj.no_of_lines)
@@ -826,3 +836,12 @@ def getSteer(frame):
   except any:
     print("whatev")
     return 0
+  
+if __name__ == '__main__':
+  cap = cv2.VideoCapture('brain/src/perception/laneDetection/test-car.avi')
+  while(cap.isOpened()):
+    _, frame = cap.read()
+    if cv2.waitKey(1) ==  ord('q'):
+        break
+    time.sleep(0.1)
+    getSteer1(frame, plot=True)
