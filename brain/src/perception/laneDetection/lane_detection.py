@@ -293,6 +293,7 @@ class Lane:
 
     if len(leftx) == 0 or len(lefty) == 0:
         # # print("Left lane missing, inferring from right lane")
+        self.not_left = 1
         if right_fit is not None:
             # Infer left_fit by shifting right_fit
             left_fit = np.copy(right_fit)
@@ -306,6 +307,7 @@ class Lane:
 
     if len(rightx) == 0 or len(righty) == 0:
         # # print("Right lane missing, inferring from left lane")
+        self.not_right = 1
         if left_fit is not None:
             right_fit = np.copy(left_fit)
             right_fit[2] += LANE_WIDTH_PIXELS
@@ -433,8 +435,6 @@ class Lane:
     # Go through one window at a time
     no_of_windows = self.no_of_windows
 
-    self.no_of_lines = 2
-
     for window in range(no_of_windows):
       
       # Identify window boundaries in x and y (and right and left)
@@ -483,11 +483,6 @@ class Lane:
       except:
         self.not_right = 1
 
-    self.no_of_lines = 2
-    if self.not_right:
-      self.no_of_lines -= 1
-    if self.not_left:
-      self.not_of_lines -= 1
     # Concatenate the arrays of indices
     left_lane_inds = np.concatenate(left_lane_inds)
     right_lane_inds = np.concatenate(right_lane_inds)
@@ -539,8 +534,14 @@ class Lane:
             rightx = prev_rightx
             righty = prev_righty
 		
-    left_fit = np.polyfit(lefty, leftx, 2)
-    right_fit = np.polyfit(righty, rightx, 2)
+    try:
+      left_fit = np.polyfit(lefty, leftx, 2)
+    except:
+      self.not_left = 1
+    try:
+      right_fit = np.polyfit(righty, rightx, 2)
+    except:
+      self.not_right = 1
 
     # Add the latest polynomial coefficients		
     prev_left_fit.append(left_fit)
@@ -809,11 +810,15 @@ def getSteer1(frame, plot=False):
     left_fit, right_fit = lane_obj.get_lane_line_indices_sliding_windows(
         plot=False)
 
-
-
     # Fill in the lane line
     lane_obj.get_lane_line_previous_window(left_fit, right_fit, plot=False)
         
+    lane_obj.no_of_lines = 2
+    if lane_obj.not_left:
+      lane_obj.no_of_lines -= 1
+    if lane_obj.not_right:
+      lane_obj.no_of_lines -= 1
+
     # Overlay lines on the original frame
     frame_with_lane_lines = lane_obj.overlay_lane_lines(plot=False)
 
