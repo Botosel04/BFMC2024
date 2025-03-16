@@ -257,3 +257,9 @@ class laneDetectionSteering(Enum):
     Owner = "laneDetection"
     msgID = 2
     msgType = "str"
+
+class DetectedSigns(Enum):
+    Queue = "General"
+    Owner = "signDetection"
+    msgID = 3
+    msgType = "list"

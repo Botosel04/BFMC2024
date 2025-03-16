@@ -4,7 +4,7 @@ import time
 import cv2
 import numpy as np
 from src.templates.threadwithstop import ThreadWithStop
-from src.utils.messages.allMessages import (DrivingMode, SpeedMotor, SteerMotor, laneDetectionSteering)
+from src.utils.messages.allMessages import (DrivingMode, SpeedMotor, SteerMotor, laneDetectionSteering, DetectedSigns)
 from src.utils.messages.messageHandlerSubscriber import messageHandlerSubscriber
 from src.utils.messages.messageHandlerSender import messageHandlerSender
 class threadmove(ThreadWithStop):
@@ -25,6 +25,7 @@ class threadmove(ThreadWithStop):
         self.speed = messageHandlerSender(self.queuesList, SpeedMotor)
         self.steer = messageHandlerSender(self.queuesList, SteerMotor)
         self.driving_mode = messageHandlerSubscriber(self.queuesList, DrivingMode, "lastOnly", True)
+        self.signs = messageHandlerSubscriber(self.queuesList, DetectedSigns, "fifo", True)
         self.lane_detection_steering = messageHandlerSubscriber(self.queuesList, laneDetectionSteering, "lastOnly", True)
 
         self.driveMode = "stop"
@@ -48,10 +49,10 @@ class threadmove(ThreadWithStop):
             if steer_angle:
                 self.steer.send(steer_angle)
 
-    def countRedPixels(self, image):
+    def countWhitePixels(self, image):
         hsv = cv2.cvtColor(image, cv2.COLOR_BGR2HSV)
-        lower_red = np.array([160,140,50]) 
-        upper_red = np.array([180,255,255])
+        lower_red = np.array([200,200,200]) 
+        upper_red = np.array([255,255,255])
 
         imgThreshHigh = cv2.inRange(hsv, lower_red, upper_red)
         nr_pix = np.sum(imgThreshHigh == 255)
