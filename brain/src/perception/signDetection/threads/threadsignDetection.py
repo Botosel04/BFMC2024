@@ -27,8 +27,8 @@ class threadsignDetection(ThreadWithStop):
         self.frameCount = 0
 
         print("helo")
-        #self.model = YOLO("src/perception/models/best_ncnn_model")
-        self.model = YOLO("src/perception/models/best.pt")
+        self.model = YOLO("src/perception/models/best_ncnn_model")
+        #self.model = YOLO("src/perception/models/best.pt")
 
     def run(self):
         while self._running:
