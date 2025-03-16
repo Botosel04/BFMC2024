@@ -822,7 +822,7 @@ def getSteer1(frame, plot=False):
     
     # Calculate center offset  																
     offset = lane_obj.calculate_car_position(print_to_terminal=False)
-        
+    offset = offset - 30 # account for bias towards the left
     # Display curvature and center offset on image
     frame_with_lane_lines2 = lane_obj.display_curvature_offset(
         frame=frame_with_lane_lines, plot=False)
