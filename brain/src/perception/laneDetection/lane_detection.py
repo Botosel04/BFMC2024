@@ -429,7 +429,9 @@ class Lane:
 
     # Go through one window at a time
     no_of_windows = self.no_of_windows
-		self.no_of_lines = 2
+
+    self.no_of_lines = 2
+
     for window in range(no_of_windows):
       
       # Identify window boundaries in x and y (and right and left)
