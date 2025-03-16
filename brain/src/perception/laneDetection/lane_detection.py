@@ -823,7 +823,7 @@ def getSteer1(frame, plot=False):
         
     # Display curvature and center offset on image
     frame_with_lane_lines2 = lane_obj.display_curvature_offset(
-        frame=frame_with_lane_lines, plot=True)
+        frame=frame_with_lane_lines, plot=False)
                     
     # Write the frame to the output video file
     return (offset, warped_frame, lane_obj.no_of_lines)
