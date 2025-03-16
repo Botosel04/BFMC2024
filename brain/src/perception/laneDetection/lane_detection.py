@@ -826,7 +826,7 @@ def getSteer1(frame, plot=False):
         frame=frame_with_lane_lines, plot=False)
                     
     # Write the frame to the output video file
-    return (offset, warped_frame, lane_obj.no_of_lines)
+    return (offset, frame_with_lane_lines2, lane_obj.no_of_lines)
  
  
 
