@@ -31,6 +31,9 @@ class threadmove(ThreadWithStop):
         self.driveMode = "stop"
         self.driveState = True
 
+        self.citySpeed = [200, 400]
+        self.highwaySpeed = [400, 600]
+
     def run(self):
         while self._running:
             drv = self.driving_mode.receive()
