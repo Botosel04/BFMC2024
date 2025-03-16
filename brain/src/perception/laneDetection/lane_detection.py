@@ -826,9 +826,9 @@ def getSteer1(frame, plot=False):
         frame=frame_with_lane_lines, plot=False)
     
     if left_curve < 10:
-      offset = -62.5
-    elif right_curve < 10:
       offset = 62.5
+    elif right_curve < 10:
+      offset = -62.5
     # Write the frame to the output video file
     return (left_curve, right_curve, offset, frame_with_lane_lines2, lane_obj.no_of_lines)
  
