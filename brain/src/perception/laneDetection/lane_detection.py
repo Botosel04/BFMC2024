@@ -515,6 +515,7 @@ class Lane:
 
     if len(leftx) == 0 or len(lefty) == 0:
         # print("Left lane missing, inferring from right lane")
+        self.not_left = 1
         if right_fit is not None:
             # Infer left_fit by shifting right_fit
             left_fit = np.copy(right_fit)
@@ -528,6 +529,7 @@ class Lane:
 
     if len(rightx) == 0 or len(righty) == 0:
         # print("Right lane missing, inferring from left lane")
+        self.not_right = 1
         if left_fit is not None:
             right_fit = np.copy(left_fit)
             right_fit[2] += LANE_WIDTH_PIXELS
@@ -538,7 +540,7 @@ class Lane:
             righty = prev_righty
 		
     left_fit = np.polyfit(lefty, leftx, 2)
-    right_fit = np.polyfit(righty, rightx, 2) 
+    right_fit = np.polyfit(righty, rightx, 2)
 
     # Add the latest polynomial coefficients		
     prev_left_fit.append(left_fit)
