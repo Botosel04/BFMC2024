@@ -39,7 +39,7 @@ class threadlaneDetection(ThreadWithStop):
                 img = np.frombuffer(image_data, dtype=np.uint8)
                 image = cv2.imdecode(img, cv2.IMREAD_COLOR)
 
-                steer_angle, processed_image, no_of_lines = getSteer(image)
+                l_curve, r_curve, steer_angle, processed_image, no_of_lines = getSteer(image)
 
                 steer_angle = -steer_angle * 4
                 if steer_angle > 250:
@@ -54,6 +54,7 @@ class threadlaneDetection(ThreadWithStop):
                 self.frameCount += 1
                 if self.frameCount % 15 == 0:
                     print(steer_angle)
+                    print(l_curve, r_curve)
                     print("No. of lines: ", no_of_lines)
                     self.frameCount = 0
 

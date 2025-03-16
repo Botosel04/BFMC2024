@@ -79,8 +79,8 @@ class Lane:
     # You need to find these corners manually.
     self.roi_points = np.float32([
       (int(0.25*width),int(0.544*height)), # Top-left corner
-      (int(width * 0.15), height - 1), # Bottom-left corner			
-      (int(0.85*width),height - 1), # Bottom-right corner
+      (int(width * 0.15), height*0.75 - 1), # Bottom-left corner			
+      (int(0.85*width),height*0.75 - 1), # Bottom-right corner
       (int(0.75*width),int(0.544*height)) # Top-right corner
     ])
 		
@@ -289,7 +289,7 @@ class Lane:
     global prev_left_fit2
     global prev_right_fit2
 
-    LANE_WIDTH_PIXELS = 300  # You may need to fine-tune this for your camera setup
+    LANE_WIDTH_PIXELS = 250  # You may need to fine-tune this for your camera setup
 
     if len(leftx) == 0 or len(lefty) == 0:
         # # print("Left lane missing, inferring from right lane")
@@ -511,7 +511,7 @@ class Lane:
     global prev_right_fit
 
     # Make sure we have nonzero pixels		
-    LANE_WIDTH_PIXELS = 300  # You may need to fine-tune this for your camera setup
+    LANE_WIDTH_PIXELS = 250  # You may need to fine-tune this for your camera setup
 
     if len(leftx) == 0 or len(lefty) == 0:
         # print("Left lane missing, inferring from right lane")
@@ -816,8 +816,8 @@ def getSteer1(frame, plot=False):
     frame_with_lane_lines = lane_obj.overlay_lane_lines(plot=False)
 
     # Calculate lane line curvature (left and right lane lines)
-    lane_obj.calculate_curvature(print_to_terminal=False)
-
+    left_curve, right_curve = lane_obj.calculate_curvature(print_to_terminal=False)
+    
     # Calculate center offset  																
     offset = lane_obj.calculate_car_position(print_to_terminal=False)
         
@@ -826,7 +826,7 @@ def getSteer1(frame, plot=False):
         frame=frame_with_lane_lines, plot=False)
                     
     # Write the frame to the output video file
-    return (offset, frame_with_lane_lines2, lane_obj.no_of_lines)
+    return (left_curve, right_curve, offset, frame_with_lane_lines2, lane_obj.no_of_lines)
  
  
 
