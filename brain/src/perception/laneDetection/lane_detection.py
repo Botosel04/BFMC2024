@@ -79,8 +79,8 @@ class Lane:
     # You need to find these corners manually.
     self.roi_points = np.float32([
       (int(0.25*width),int(0.544*height)), # Top-left corner
-      (int(width * 0.15), height*0.75 - 1), # Bottom-left corner			
-      (int(0.85*width),height*0.75 - 1), # Bottom-right corner
+      (int(width * 0.15), height*0.8 - 1), # Bottom-left corner			
+      (int(0.85*width),height*0.8 - 1), # Bottom-right corner
       (int(0.75*width),int(0.544*height)) # Top-right corner
     ])
 		
@@ -824,7 +824,11 @@ def getSteer1(frame, plot=False):
     # Display curvature and center offset on image
     frame_with_lane_lines2 = lane_obj.display_curvature_offset(
         frame=frame_with_lane_lines, plot=False)
-                    
+    
+    if left_curve < 10:
+      offset = -62.5
+    elif right_curve < 10:
+      offset = 62.5
     # Write the frame to the output video file
     return (left_curve, right_curve, offset, frame_with_lane_lines2, lane_obj.no_of_lines)
  
