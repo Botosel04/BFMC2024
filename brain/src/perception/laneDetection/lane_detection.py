@@ -69,6 +69,8 @@ class Lane:
     height = self.orig_image_size[1]
     self.width = width
     self.height = height
+
+    self.no_of_lines = 0
 	
     # Four corners of the trapezoid-shaped region of interest
     # You need to find these corners manually.
@@ -200,7 +202,6 @@ class Lane:
     if plot == True:
 		
       # Draw both the image and the histogram
-      '''
       figure, (ax1, ax2) = plt.subplots(2,1) # 2 row, 1 columns
       figure.set_size_inches(10, 5)
       ax1.imshow(frame, cmap='gray')
@@ -209,7 +210,6 @@ class Lane:
       ax2.set_title("Histogram Peaks")
       plt.show()
       plt.close()
-      '''
 			
     return self.histogram
 
@@ -460,6 +460,7 @@ class Lane:
       minpix = self.minpix
       if len(good_left_inds) > minpix:
         leftx_current = np.int32(np.mean(nonzerox[good_left_inds]))
+        self.no_of_lines += 1
       else:
          # print("nu e detectata stanga")
          rightx_avg = np.int32(np.mean(nonzerox[good_right_inds]))
@@ -468,6 +469,7 @@ class Lane:
       
       if len(good_right_inds) > minpix:        
         rightx_current = np.int32(np.mean(nonzerox[good_right_inds]))
+        self.no_of_lines += 1
       else:
         # print("nu e detectata dreapta")
         leftx_avg = np.int32(np.mean(nonzerox[good_left_inds]))
@@ -793,6 +795,8 @@ def getSteer1(frame):
     left_fit, right_fit = lane_obj.get_lane_line_indices_sliding_windows(
         plot=False)
 
+
+
     # Fill in the lane line
     lane_obj.get_lane_line_previous_window(left_fit, right_fit, plot=False)
         
@@ -810,7 +814,7 @@ def getSteer1(frame):
         frame=frame_with_lane_lines, plot=False)
                     
     # Write the frame to the output video file
-    return (offset, warped_frame)
+    return (offset, warped_frame, lane_obj.no_of_lines)
  
  
 

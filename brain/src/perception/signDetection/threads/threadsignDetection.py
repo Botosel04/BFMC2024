@@ -36,7 +36,7 @@ class threadsignDetection(ThreadWithStop):
                 cam = self.camera.receive()
                 self.frameCount += 1
 
-                if self.frameCount % 60 != 0:
+                if self.frameCount % 30 != 0:
                     continue
 
                 self.frameCount = 0
@@ -48,4 +48,7 @@ class threadsignDetection(ThreadWithStop):
                 img = np.frombuffer(image_data, dtype=np.uint8)
                 image = cv2.imdecode(img, cv2.IMREAD_COLOR)
 
-                print(self.model(image))
+                detect = self.model(image)
+                pred = detect.pop()
+                detectProbs = [[int(a), float(b)] for a, b in list(zip(pred.boxes.cls, pred.boxes.conf))]
+                print(detectProbs)

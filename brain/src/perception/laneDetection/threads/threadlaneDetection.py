@@ -38,8 +38,8 @@ class threadlaneDetection(ThreadWithStop):
                 img = np.frombuffer(image_data, dtype=np.uint8)
                 image = cv2.imdecode(img, cv2.IMREAD_COLOR)
 
-                steer_angle, processed_image = getSteer(image)
-                steer_angle = -steer_angle * 4
+                steer_angle, processed_image, no_of_lines = getSteer(image)
+                steer_angle = -steer_angle * 5
                 if steer_angle > 250:
                     steer_angle = 250
                 elif steer_angle < -250:
@@ -48,6 +48,7 @@ class threadlaneDetection(ThreadWithStop):
                 processed_image_bytes = base64.b64encode(processed_image_jpg).decode("utf-8")
                 self.processedCamera.send(processed_image_bytes)
                 # print(steer_angle)
+                # print("No. of lines: ", no_of_lines)
                 if abs(steer_angle - self.last_angle) > 10:
                     self.steer.send(str(int(steer_angle)))
                     self.last_angle = steer_angle
