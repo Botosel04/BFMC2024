@@ -50,5 +50,5 @@ class threadsignDetection(ThreadWithStop):
 
                 detect = self.model(image)
                 pred = detect.pop()
-                detectProbs = [[a, float(b)] for a, b in list(zip(pred.names[int(pred.boxes.cls)], pred.boxes.conf))]
+                detectProbs = [[pred.names[int(a)], float(b)] for a, b in list(zip(pred.boxes.cls, pred.boxes.conf))]
                 print(detectProbs)
