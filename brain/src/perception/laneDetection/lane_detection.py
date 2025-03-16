@@ -35,7 +35,7 @@ prev_right_fit2 = []
 def canny(image):
     gray = cv2.cvtColor(image, cv2.COLOR_RGB2GRAY)
     blur = cv2.GaussianBlur(gray, (5, 5), 0)
-    canny = cv2.Canny(blur, 50, 150)
+    canny = cv2.Canny(blur, 100, 200)
     return canny
 
 class Lane:
@@ -460,7 +460,6 @@ class Lane:
       minpix = self.minpix
       if len(good_left_inds) > minpix:
         leftx_current = np.int32(np.mean(nonzerox[good_left_inds]))
-        self.no_of_lines += 1
       else:
          # print("nu e detectata stanga")
          rightx_avg = np.int32(np.mean(nonzerox[good_right_inds]))
@@ -469,7 +468,6 @@ class Lane:
       
       if len(good_right_inds) > minpix:        
         rightx_current = np.int32(np.mean(nonzerox[good_right_inds]))
-        self.no_of_lines += 1
       else:
         # print("nu e detectata dreapta")
         leftx_avg = np.int32(np.mean(nonzerox[good_left_inds]))
@@ -501,8 +499,11 @@ class Lane:
     # Make sure we have nonzero pixels		
     LANE_WIDTH_PIXELS = 300  # You may need to fine-tune this for your camera setup
 
+    self.no_of_lines = 2
+
     if len(leftx) == 0 or len(lefty) == 0:
         # print("Left lane missing, inferring from right lane")
+        self.no_of_lines -= 1
         if right_fit is not None:
             # Infer left_fit by shifting right_fit
             left_fit = np.copy(right_fit)
@@ -516,6 +517,7 @@ class Lane:
 
     if len(rightx) == 0 or len(righty) == 0:
         # print("Right lane missing, inferring from left lane")
+        self.no_of_lines -= 1
         if left_fit is not None:
             right_fit = np.copy(left_fit)
             right_fit[2] += LANE_WIDTH_PIXELS
