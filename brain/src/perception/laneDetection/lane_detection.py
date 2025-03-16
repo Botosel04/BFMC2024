@@ -429,7 +429,7 @@ class Lane:
 
     # Go through one window at a time
     no_of_windows = self.no_of_windows
-		
+		self.no_of_lines = 2
     for window in range(no_of_windows):
       
       # Identify window boundaries in x and y (and right and left)
@@ -462,6 +462,7 @@ class Lane:
         leftx_current = np.int32(np.mean(nonzerox[good_left_inds]))
       else:
          # print("nu e detectata stanga")
+         self.no_of_lines -= 1
          rightx_avg = np.int32(np.mean(nonzerox[good_right_inds]))
          leftx_current = rightx_avg - 160
         
@@ -470,6 +471,7 @@ class Lane:
         rightx_current = np.int32(np.mean(nonzerox[good_right_inds]))
       else:
         # print("nu e detectata dreapta")
+        self.no_of_lines -= 1
         leftx_avg = np.int32(np.mean(nonzerox[good_left_inds]))
         rightx_current = leftx_avg + 160
        
@@ -499,11 +501,8 @@ class Lane:
     # Make sure we have nonzero pixels		
     LANE_WIDTH_PIXELS = 300  # You may need to fine-tune this for your camera setup
 
-    self.no_of_lines = 2
-
     if len(leftx) == 0 or len(lefty) == 0:
         # print("Left lane missing, inferring from right lane")
-        self.no_of_lines -= 1
         if right_fit is not None:
             # Infer left_fit by shifting right_fit
             left_fit = np.copy(right_fit)
@@ -517,7 +516,6 @@ class Lane:
 
     if len(rightx) == 0 or len(righty) == 0:
         # print("Right lane missing, inferring from left lane")
-        self.no_of_lines -= 1
         if left_fit is not None:
             right_fit = np.copy(left_fit)
             right_fit[2] += LANE_WIDTH_PIXELS
