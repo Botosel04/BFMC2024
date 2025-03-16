@@ -470,7 +470,7 @@ class Lane:
           # print("nu e detectata stanga")
           rightx_avg = np.int32(np.mean(nonzerox[good_right_inds]))
           leftx_current = rightx_avg - 160
-      except any:
+      except:
         self.not_left = 1
         
       try:
@@ -480,7 +480,7 @@ class Lane:
           # print("nu e detectata dreapta")
           leftx_avg = np.int32(np.mean(nonzerox[good_left_inds]))
           rightx_current = leftx_avg + 160
-      except any:
+      except:
         self.not_right = 1
 
     self.no_of_lines = 2
@@ -837,8 +837,8 @@ def getSteer1(frame, plot=False):
 def getSteer(frame):
   try:
     return getSteer1(frame)
-  except any:
-    print("whatev")
+  except:
+    print("\no puscat\n")
     return 0
   
 if __name__ == '__main__':
