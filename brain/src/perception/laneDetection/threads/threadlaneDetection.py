@@ -32,7 +32,7 @@ class threadlaneDetection(ThreadWithStop):
 
         self.wid = 512
 
-        self.roi = [[168, 175], [int(self.wid*0.25), int(self.wid*0.75)]]
+        self.roi = [[150, 175], [int(self.wid*0.25), int(self.wid*0.75)]]
         self.roisize = (175 - 168) * (int(self.wid*0.75) - int(self.wid*0.25))
 
     def run(self):
@@ -56,10 +56,11 @@ class threadlaneDetection(ThreadWithStop):
                     steer_angle = 250
                 elif steer_angle < -250:
                     steer_angle = -250
-
-                _, processed_image_jpg = cv2.imencode(".jpg", processed_image)
-                processed_image_bytes = base64.b64encode(processed_image_jpg).decode("utf-8")
-                self.processedCamera.send(processed_image_bytes)
+                
+                if processed_image is not None:
+                    _, processed_image_jpg = cv2.imencode(".jpg", processed_image)
+                    processed_image_bytes = base64.b64encode(processed_image_jpg).decode("utf-8")
+                    self.processedCamera.send(processed_image_bytes)
 
                 
 
