@@ -56,8 +56,8 @@ class threadmove(ThreadWithStop):
             
             if self.driveMode == 'manual':
                 self.speed.send('100')
-                self.steer.send('-200')
-                time.sleep(4)
+                self.steer.send('-170')
+                time.sleep(7)
                 self.steer.send('0')
                 self.speed.send('0')
                 self.driveMode = 'stop'
