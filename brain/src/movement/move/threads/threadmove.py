@@ -58,6 +58,7 @@ class threadmove(ThreadWithStop):
 
                     if stopSign:
                         if not self.passingStop:
+                            print("SAW STOP")
                             self.sawStop = True
 
                     if lineInFront:
