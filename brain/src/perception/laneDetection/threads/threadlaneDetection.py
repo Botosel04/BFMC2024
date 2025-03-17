@@ -32,8 +32,8 @@ class threadlaneDetection(ThreadWithStop):
 
         self.wid = 512
 
-        self.roi = [[165, 175], [int(self.wid*0.25), int(self.wid*0.75)]]
-        self.roisize = (175 - 168) * (int(self.wid*0.75) - int(self.wid*0.25))
+        self.roi = [[175, 185], [int(self.wid*0.3), int(self.wid*0.7)]]
+        self.roisize = (185 - 175) * (int(self.wid*0.7) - int(self.wid*0.3))
 
     def run(self):
         while self._running:
@@ -76,11 +76,11 @@ class threadlaneDetection(ThreadWithStop):
                     self.last_angle = steer_angle
 
     def countWhitePixels(self, image):
-        hsv = cv2.cvtColor(image, cv2.COLOR_BGR2HSV)
-        lower_red = np.array([230,230,230]) 
+        #hsv = cv2.cvtColor(image, cv2.COLOR_BGR2HSV)
+        lower_red = np.array([220,220,220]) 
         upper_red = np.array([255,255,255])
 
-        imgThreshHigh = cv2.inRange(hsv, lower_red, upper_red)
+        imgThreshHigh = cv2.inRange(image, lower_red, upper_red)
         nr_pix = np.sum(imgThreshHigh == 255)
         return nr_pix
 
