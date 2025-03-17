@@ -30,6 +30,11 @@ class threadlaneDetection(ThreadWithStop):
         self.last_angle = 0.0
         self.frameCount = 0
 
+        self.wid = 512
+
+        self.roi = [[168, 175], [int(self.wid*0.25), int(self.wid*0.75)]]
+        self.roisize = (175 - 168) * (int(self.wid*0.75) - int(self.wid*0.25))
+
     def run(self):
         while self._running:
             cam = self.camera.receive()
@@ -39,6 +44,11 @@ class threadlaneDetection(ThreadWithStop):
                 img = np.frombuffer(image_data, dtype=np.uint8)
                 image = cv2.imdecode(img, cv2.IMREAD_COLOR)
 
+                cropped = image[self.roi[0][0]:self.roi[0][1]][self.roi[1][0]:self.roi[1][1]]
+                self.whiteForLine = self.countWhitePixels(cropped)
+                if self.whiteForLine > self.roisize * 0.5:
+                    print("Detected Line in front")
+
                 steer_angle, processed_image, no_of_lines = getSteer(image)
 
                 steer_angle = -steer_angle * 20/3
@@ -47,10 +57,11 @@ class threadlaneDetection(ThreadWithStop):
                 elif steer_angle < -250:
                     steer_angle = -250
 
-                if processed_image is not None:
-                    _, processed_image_jpg = cv2.imencode(".jpg", processed_image)
-                    processed_image_bytes = base64.b64encode(processed_image_jpg).decode("utf-8")
-                    self.processedCamera.send(processed_image_bytes)
+                _, processed_image_jpg = cv2.imencode(".jpg", processed_image)
+                processed_image_bytes = base64.b64encode(processed_image_jpg).decode("utf-8")
+                self.processedCamera.send(processed_image_bytes)
+
+                
 
                 self.frameCount += 1
                 if self.frameCount % 15 == 0:
@@ -61,6 +72,16 @@ class threadlaneDetection(ThreadWithStop):
                 if abs(steer_angle - self.last_angle) > 15:
                     self.steer.send(str(int(steer_angle)))
                     self.last_angle = steer_angle
+
+    def countWhitePixels(self, image):
+        hsv = cv2.cvtColor(image, cv2.COLOR_BGR2HSV)
+        lower_red = np.array([230,230,230]) 
+        upper_red = np.array([255,255,255])
+
+        imgThreshHigh = cv2.inRange(hsv, lower_red, upper_red)
+        nr_pix = np.sum(imgThreshHigh == 255)
+        return nr_pix
+
 
     def subscribe(self):
         """Subscribes to the messages you are interested in"""

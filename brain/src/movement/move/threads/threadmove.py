@@ -51,15 +51,6 @@ class threadmove(ThreadWithStop):
             if steer_angle:
                 self.steer.send(steer_angle)
 
-    def countWhitePixels(self, image):
-        hsv = cv2.cvtColor(image, cv2.COLOR_BGR2HSV)
-        lower_red = np.array([200,200,200]) 
-        upper_red = np.array([255,255,255])
-
-        imgThreshHigh = cv2.inRange(hsv, lower_red, upper_red)
-        nr_pix = np.sum(imgThreshHigh == 255)
-        return nr_pix
-
     def subscribe(self):
         """Subscribes to the messages you are interested in"""
         pass
