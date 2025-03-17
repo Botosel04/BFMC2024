@@ -28,15 +28,7 @@ class threadsignDetection(ThreadWithStop):
         self.model = YOLO("src/perception/models/best_ncnn_model")
         #self.model = YOLO("src/perception/models/best.pt")
 
-        self.cross_walk = messageHandlerSender(self.queuesList, CrosswalkSign)
-        self.highway_entry = messageHandlerSender(self.queuesList, HighwayEntrySign)
-        self.highway_exit = messageHandlerSender(self.queuesList, HighwayExitSign)
-        self.no_entry = messageHandlerSender(self.queuesList, NoEntryRoadSign)
-        self.one_way = messageHandlerSender(self.queuesList, OneWayRoadSign)
-        self.parking = messageHandlerSender(self.queuesList, ParkingSign)
-        self.priority = messageHandlerSender(self.queuesList, PrioritySign)
-        self.roundabout = messageHandlerSender(self.queuesList, RoundaboutSign)
-        self.stop_sign = messageHandlerSender(self.queuesList, StopSign)
+        self.events = [messageHandlerSender(self.queuesList, CrosswalkSign), messageHandlerSender(self.queuesList, HighwayEntrySign), messageHandlerSender(self.queuesList, HighwayExitSign), messageHandlerSender(self.queuesList, NoEntryRoadSign), messageHandlerSender(self.queuesList, OneWayRoadSign), messageHandlerSender(self.queuesList, ParkingSign), messageHandlerSender(self.queuesList, PrioritySign), messageHandlerSender(self.queuesList, RoundaboutSign), messageHandlerSender(self.queuesList, StopSign)]
 
     def run(self):
         while self._running:
