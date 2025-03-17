@@ -49,34 +49,35 @@ class threadmove(ThreadWithStop):
                     self.speed.send("100")
                     self.driveMode = drv
 
-                    steer_angle = self.lane_detection_steering.receive()
-                    if steer_angle:
-                        self.steer.send(steer_angle)
-                    
-                    lineInFront = self.line_in_front.receive()
-                    stopSign = self.stop_sign.receive()
-
-                    if stopSign:
-                        if not self.passingStop:
-                            print("SAW STOP")
-                            self.sawStop = True
-
-                    if lineInFront is not None:
-                        if lineInFront and self.sawStop:
-                            print("STOPPING")
-                            self.speed.send("0")
-                            self.sawStop = False
-                            time.sleep(3)
-                            self.speed.send("100")
-                            self.passingStop = True
-                        if not lineInFront and self.passingStop:
-                            self.passingStop = False
-
                 elif drv in ["manual", "legacy", "stop"]:
                     self.speed.send("0")
                     self.steer.send("0")
                     self.driveMode = drv
                     print("Driving mode changed from auto")
+        
+            if self.driveMode == 'auto':
+                steer_angle = self.lane_detection_steering.receive()
+                if steer_angle:
+                    self.steer.send(steer_angle)
+                
+                lineInFront = self.line_in_front.receive()
+                stopSign = self.stop_sign.receive()
+
+                if stopSign:
+                    if not self.passingStop:
+                        print("SAW STOP")
+                        self.sawStop = True
+
+                if lineInFront is not None:
+                    if lineInFront and self.sawStop:
+                        print("STOPPING")
+                        self.speed.send("0")
+                        self.sawStop = False
+                        time.sleep(3)
+                        self.speed.send("100")
+                        self.passingStop = True
+                    if not lineInFront and self.passingStop:
+                        self.passingStop = False
             
 
     def subscribe(self):
