@@ -49,6 +49,7 @@ class threadmove(ThreadWithStop):
         self.passingStop = False
 
         self.onHighway = False
+        self.intersection = 'none'
         
 
         self.currentSpeed = threadmove.NORMAL_SPEED
@@ -61,13 +62,11 @@ class threadmove(ThreadWithStop):
                     print("Driving mode set to auto")
                     self.speed.send("100")
                     self.driveMode = drv
-
                 elif drv in ["manual", "legacy", "stop"]:
                     self.speed.send("0")
                     self.steer.send("0")
                     self.driveMode = drv
                     print("Driving mode changed from auto")
-        
             if self.driveMode == 'auto':
                 steer_angle = self.lane_detection_steering.receive()
                 if steer_angle:
@@ -100,7 +99,7 @@ class threadmove(ThreadWithStop):
                     if not lineInFront and self.passingStop:
                         self.passingStop = False
 
-                if self.currentSpeed 
+                if self.currentSpeed !
                 self.speed.send(self.currentSpeed)
 
 
