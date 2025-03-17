@@ -50,8 +50,8 @@ class threadsignDetection(ThreadWithStop):
 
                 detect = self.model(image)
                 pred = detect.pop()
-                #detectProbs = [[pred.names[int(a)], float(b)] for a, b in list(zip(pred.boxes.cls, pred.boxes.conf))]
-                #coords = [[[int(a) for a in sign[0:2]], [int(a) for a in sign[2:4]]] for sign in pred.boxes.data]
+                detectProbs = [[pred.names[int(a)], int(b), float(c)] for a, b, c in list(zip(pred.boxes.cls, pred.boxes.cls, pred.boxes.conf))]
+                coords = [[[int(a) for a in sign[0:2]], [int(a) for a in sign[2:4]]] for sign in pred.boxes.data]
 
                 '''
                 for name, prob, coord in zip(detectProbs, coords):
@@ -59,6 +59,13 @@ class threadsignDetection(ThreadWithStop):
                         self.send'
                 '''
 
+                print(detectProbs, coords)
+                for name, tag, prob, box in zip(detectProbs, coords):
+                    on_right = (box[0][0] + box[1][0]) / 2 > pred.orig_shape[0]
+                    message = "right" if on_right else "left"
+                    self.events[tag].send(message)
+                
+'''
                 for i in range(len(pred.boxes.cls)):
                     on_right = (pred.boxes.xyxy[i][0] + pred.boxes.xyxy[i][2]) / 2 > pred.orig_shape[0]
                     if int(pred.boxes.cls[i]) == 0 and on_right:
@@ -79,3 +86,4 @@ class threadsignDetection(ThreadWithStop):
                         self.roundabout.send("")
                     elif int(pred.boxes.cls[i]) == 8 and on_right:
                         self.stop_sign.send("")
+'''
