@@ -135,8 +135,8 @@ if Perception:
     processLaneDetection = processlaneDetection(queueList, logging, debugging = False)
     allProcesses.append(processLaneDetection)
 
-    #processSignDetection = processsignDetection(queueList, logging, debugging = False)
-    #allProcesses.append(processSignDetection)
+    processSignDetection = processsignDetection(queueList, logging, debugging = False)
+    allProcesses.append(processSignDetection)
 
 # ------ New component runs starts here ------#
  
