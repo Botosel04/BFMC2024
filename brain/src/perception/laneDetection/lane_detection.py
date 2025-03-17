@@ -468,6 +468,7 @@ class Lane:
           leftx_current = np.int32(np.mean(nonzerox[good_left_inds]))
         else:
           # print("nu e detectata stanga")
+          self.not_left = 1
           rightx_avg = np.int32(np.mean(nonzerox[good_right_inds]))
           leftx_current = rightx_avg - 160
       except:
@@ -478,6 +479,7 @@ class Lane:
           rightx_current = np.int32(np.mean(nonzerox[good_right_inds]))
         else:
           # print("nu e detectata dreapta")
+          self.not_right = 1
           leftx_avg = np.int32(np.mean(nonzerox[good_left_inds]))
           rightx_current = leftx_avg + 160
       except:

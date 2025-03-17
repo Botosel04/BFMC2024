@@ -41,7 +41,7 @@ class threadlaneDetection(ThreadWithStop):
 
                 l_curve, r_curve, steer_angle, processed_image, no_of_lines = getSteer(image)
 
-                steer_angle = -steer_angle * 4
+                steer_angle = -steer_angle * 2/3
                 if steer_angle > 250:
                     steer_angle = 250
                 elif steer_angle < -250:
