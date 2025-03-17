@@ -28,31 +28,18 @@ class threadmove(ThreadWithStop):
 
         self.speed = messageHandlerSender(self.queuesList, SpeedMotor)
         self.steer = messageHandlerSender(self.queuesList, SteerMotor)
-        self.driving_mode = messageHandlerSubscriber(self.queuesList, DrivingMode, "lastOnly", True)
-        self.lane_detection_steering = messageHandlerSubscriber(self.queuesList, laneDetectionSteering, "lastOnly", True)
-        self.line_in_front = messageHandlerSubscriber(self.queuesList, LineInFront, "lastOnly", True)
-        self.highway_enter = messageHandlerSubscriber(self.queuesList, HighwayEntrySign, "lastOnly", True)
-        self.highway_exit = messageHandlerSubscriber(self.queuesList, HighwayExitSign, "lastOnly", True)
-
-
-        self.stop_sign = messageHandlerSubscriber(self.queuesList, StopSign, "lastOnly", True)
-        self.cross_walk_sign = messageHandlerSubscriber(self.queuesList, CrosswalkSign, "lastOnly", True)
-
 
         self.driveMode = "stop"
         self.driveState = True
-
-        self.citySpeed = [200, 400]
-        self.highwaySpeed = [400, 600]
 
         self.sawStop = False
         self.passingStop = False
 
         self.onHighway = False
         self.intersection = 'none'
-        
 
         self.currentSpeed = threadmove.NORMAL_SPEED
+        self.speed.send(self.currentSpeed)
 
     def run(self):
         while self._running:
@@ -99,11 +86,18 @@ class threadmove(ThreadWithStop):
                     if not lineInFront and self.passingStop:
                         self.passingStop = False
 
-                if self.currentSpeed !
-                self.speed.send(self.currentSpeed)
-
+                if self.currentSpeed != targetSpeed:
+                    self.currentSpeed = targetSpeed
+                    self.speed.send(self.currentSpeed)
 
     def subscribe(self):
         """Subscribes to the messages you are interested in"""
-        pass
+        self.driving_mode = messageHandlerSubscriber(self.queuesList, DrivingMode, "lastOnly", True)
+        self.lane_detection_steering = messageHandlerSubscriber(self.queuesList, laneDetectionSteering, "lastOnly", True)
+        self.line_in_front = messageHandlerSubscriber(self.queuesList, LineInFront, "lastOnly", True)
+        self.highway_enter = messageHandlerSubscriber(self.queuesList, HighwayEntrySign, "lastOnly", True)
+        self.highway_exit = messageHandlerSubscriber(self.queuesList, HighwayExitSign, "lastOnly", True)
+        self.stop_sign = messageHandlerSubscriber(self.queuesList, StopSign, "lastOnly", True)
+        self.cross_walk_sign = messageHandlerSubscriber(self.queuesList, CrosswalkSign, "lastOnly", True)
+
 
