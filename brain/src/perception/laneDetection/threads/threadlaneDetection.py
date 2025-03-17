@@ -3,7 +3,7 @@ import base64
 import cv2
 import numpy as np
 from src.templates.threadwithstop import ThreadWithStop
-from src.utils.messages.allMessages import (laneDetectionSteering, mainCamera, serialCamera, processedCamera, LineInFront)
+from src.utils.messages.allMessages import (Pedestrian, laneDetectionSteering, mainCamera, serialCamera, processedCamera, LineInFront)
 from src.utils.messages.messageHandlerSubscriber import messageHandlerSubscriber
 from src.utils.messages.messageHandlerSender import messageHandlerSender
 from src.perception.laneDetection.lane_detection import getSteer
@@ -27,8 +27,8 @@ class threadlaneDetection(ThreadWithStop):
         self.steer = messageHandlerSender(self.queuesList, laneDetectionSteering)
         self.lineInFront = messageHandlerSender(self.queuesList, LineInFront)
         self.camera = messageHandlerSubscriber(self.queuesList, serialCamera, "lastOnly", True)
+        self.pedestrian = messageHandlerSubscriber(self.queuesList, Pedestrian, "lastOnly", True)
         
-
         self.last_angle = 0.0
         self.frameCount = 0
 

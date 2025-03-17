@@ -264,6 +264,13 @@ class LineInFront(Enum):
     msgID = 3
     msgType = "bool"
 
+class Pedestrian(Enum):
+    Queue = "General"
+    Owner = "laneDetection"
+    msgID = 4
+    msgType = "bool"
+
+
 class StopSign(Enum):
     Queue = "Warning"
     Owner = "signDetection"
