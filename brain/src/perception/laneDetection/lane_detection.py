@@ -79,8 +79,8 @@ class Lane:
     # You need to find these corners manually.
     self.roi_points = np.float32([
       (int(0.25*width),int(0.544*height)), # Top-left corner
-      (int(width * 0.15), height - 1), # Bottom-left corner			
-      (int(0.85*width),height - 1), # Bottom-right corner
+      (int(width * 0.15), height*0.8 - 1), # Bottom-left corner			
+      (int(0.85*width),height*0.8 - 1), # Bottom-right corner
       (int(0.75*width),int(0.544*height)) # Top-right corner
     ])
 		
@@ -815,13 +815,17 @@ def getSteer1(frame, plot=False):
     # Fill in the lane line
     lane_obj.get_lane_line_previous_window(left_fit, right_fit, plot=False)
         
+    forcedOffset = None
+
     lane_obj.no_of_lines = 2
     if lane_obj.not_left:
+      forcedOffset = 37.5
       lane_obj.no_of_lines -= 1
     if lane_obj.not_right:
+      forcedOffset = -37.5
       lane_obj.no_of_lines -= 1
 
-
+    
 
     # Overlay lines on the original frame
     frame_with_lane_lines = lane_obj.overlay_lane_lines(plot=False)
@@ -832,6 +836,8 @@ def getSteer1(frame, plot=False):
     # Calculate center offset  																
     offset = lane_obj.calculate_car_position(print_to_terminal=False)
     offset = offset - 15 # account for bias towards the left
+    if forcedOffset is not None:
+      offset = forcedOffset
     # Display curvature and center offset on image
     frame_with_lane_lines2 = lane_obj.display_curvature_offset(
         frame=frame_with_lane_lines, plot=False)
