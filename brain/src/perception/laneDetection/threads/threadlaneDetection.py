@@ -57,7 +57,7 @@ class threadlaneDetection(ThreadWithStop):
                 elif steer_angle < -250:
                     steer_angle = -250
                 
-                processed_image = cropped
+                
                 if processed_image is not None:
                     _, processed_image_jpg = cv2.imencode(".jpg", processed_image)
                     processed_image_bytes = base64.b64encode(processed_image_jpg).decode("utf-8")
