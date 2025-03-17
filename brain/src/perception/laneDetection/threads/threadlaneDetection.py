@@ -27,7 +27,7 @@ class threadlaneDetection(ThreadWithStop):
         self.steer = messageHandlerSender(self.queuesList, laneDetectionSteering)
         self.lineInFront = messageHandlerSender(self.queuesList, LineInFront)
         self.camera = messageHandlerSubscriber(self.queuesList, serialCamera, "lastOnly", True)
-        self.pedestrian = messageHandlerSubscriber(self.queuesList, Pedestrian, "lastOnly", True)
+        self.pedestrian = messageHandlerSender(self.queuesList, Pedestrian, "lastOnly", True)
         
         self.last_angle = 0.0
         self.frameCount = 0
