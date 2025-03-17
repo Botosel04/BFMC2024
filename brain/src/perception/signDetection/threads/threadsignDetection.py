@@ -27,7 +27,7 @@ class threadsignDetection(ThreadWithStop):
         self.frameCount = 0
         self.model = YOLO("src/perception/models/best_ncnn_model")
         #self.model = YOLO("src/perception/models/best.pt")
-        self.confList = [0.0, 0.3, 0.7, 0.8, 0.0, 0.9, 0.8, 0.9]
+        self.confList = [0.0, 0.3, 0.7, 0.8, 0.0, 0.5, 0.9, 0.8, 0.9]
 
         self.events = [messageHandlerSender(self.queuesList, CrosswalkSign), messageHandlerSender(self.queuesList, HighwayEntrySign), messageHandlerSender(self.queuesList, HighwayExitSign), messageHandlerSender(self.queuesList, NoEntryRoadSign), messageHandlerSender(self.queuesList, OneWayRoadSign), messageHandlerSender(self.queuesList, ParkingSign), messageHandlerSender(self.queuesList, PrioritySign), messageHandlerSender(self.queuesList, RoundaboutSign), messageHandlerSender(self.queuesList, StopSign)]
 
