@@ -58,5 +58,4 @@ class threadsignDetection(ThreadWithStop):
                     name, tag, conf = prob
                     on_right = (box[0][0] + box[1][0]) / 2 > pred.orig_shape[0]
                     message = "right" if on_right else "left"
-                    if conf > 0.7:
-                        self.events[tag].send(message)
+                    self.events[tag].send(message)
