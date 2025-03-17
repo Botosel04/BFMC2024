@@ -118,8 +118,8 @@ class Lane:
     self.righty = None
 		
     # Pixel parameters for x and y dimensions
-    self.YM_PER_PIX = 7.0 / width # meters per pixel in y dimension
-    self.XM_PER_PIX = 3.7 / height # meters per pixel in x dimension
+    self.YM_PER_PIX = 4.0 / width # meters per pixel in y dimension
+    self.XM_PER_PIX = 2.7 / height # meters per pixel in x dimension
 		
     # Radii of curvature and offset
     self.left_curvem = None
@@ -827,15 +827,15 @@ def getSteer1(frame, plot=False):
     
     # Calculate center offset  																
     offset = lane_obj.calculate_car_position(print_to_terminal=False)
-    offset = offset - 30 # account for bias towards the left
+    offset = offset - 15 # account for bias towards the left
     # Display curvature and center offset on image
     frame_with_lane_lines2 = lane_obj.display_curvature_offset(
         frame=frame_with_lane_lines, plot=False)
     
-    if left_curve < 10:
-      offset = 62.5
-    elif right_curve < 10:
-      offset = -62.5
+    # if left_curve < 10:
+    #   offset = 62.5
+    # elif right_curve < 10:
+    #   offset = -62.5
     # Write the frame to the output video file
     return (left_curve, right_curve, offset, frame_with_lane_lines2, lane_obj.no_of_lines)
  
