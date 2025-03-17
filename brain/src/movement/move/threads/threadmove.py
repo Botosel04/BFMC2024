@@ -69,7 +69,7 @@ class threadmove(ThreadWithStop):
                         self.sawStop = True
 
                 if self.passingStop:
-                    self.send("100")
+                    self.speed.send("100")
 
                 if lineInFront is not None:
                     if lineInFront and self.sawStop:
