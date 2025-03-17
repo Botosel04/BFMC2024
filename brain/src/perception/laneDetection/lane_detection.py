@@ -1,233 +1,5 @@
-# import cv2
-# import numpy as np
-# import math
 
-# ## leftpoint = -100
-# leftpoint = -60
-# ## rightpoint = 2100
-# rightpoint = 572
-# ## toppoint = 1000, 250
-# toppoint = 256, 60
-# smoothed_angle = 0.0
-
-# def apply_deadzone(angle, threshold=5):
-#     if abs(angle) < threshold:
-#         return 0
-#     return angle
-
-# def update_smoothed_angle(new_angle, alpha=0.2):
-#     global smoothed_angle
-#     # Exponential moving average: new_smoothed = alpha * new_angle + (1 - alpha) * old_smoothed
-#     smoothed_angle = alpha * new_angle + (1 - alpha) * smoothed_angle
-#     return smoothed_angle
-
-# def compute_steering_angle(frame, lines, max_angle=30):
-#     height, width, _ = frame.shape
-
-#     if lines is None or len(lines) == 0:
-#         return 0
-
-#     lane_center = 0
-#     if len(lines) == 2:
-#         left_line, right_line = lines
-#         left_bottom_x = left_line[0] 
-#         right_bottom_x = right_line[0]  
-#         lane_center = (left_bottom_x + right_bottom_x) / 2.0
-#     elif len(lines) == 1:
-#         line = lines[0]
-#         x1, y1, x2, y2 = line
-#         bottom_x = x1 if y1 > y2 else x2
-#         lane_center = 0
-#         if bottom_x > width/2:
-#             lane_center = width
-#         else:
-#             lane_center = 0
-#         #lane_center = bottom_x
-    
-
-#     frame_center = width / 2.0
-#     error_pixels = lane_center - frame_center
-#     print("err: " + str(error_pixels))
-
-#     angle_radian = math.atan(error_pixels / height)
-#     angle_degree = angle_radian * 180.0 / math.pi
-
-#     steering_angle = max(-max_angle, min(max_angle, angle_degree))
-
-#     return steering_angle
-
-# def make_coordinates(image, line_parameters):
-#     slope, intercept = line_parameters
-#     y1 = image.shape[0]
-#     y2 = int(y1 * (3 / 5))
-#     x1 = int((y1 - intercept) / slope)
-#     x2 = int((y2 - intercept) / slope)
-
-#     return np.array([x1, y1, x2, y2])
-
-# def average_slope_intercept(lane_image, lines):
-#     left_fit = []
-#     right_fit = []
-
-#     if lines is None:
-#         return None
-
-#     for line in lines:
-#         x1, y1, x2, y2 = line.reshape(4)
-#         parameters = np.polyfit((x1, x2), (y1, y2), 1)
-#         slope = parameters[0]
-#         intercept = parameters[1]
-
-#         if slope < 0:
-#             left_fit.append((slope, intercept))
-#         else:
-#             right_fit.append((slope, intercept))
-
-#     left_line, right_line = None, None
-
-#     if left_fit:
-#         left_fit_average = np.average(left_fit, axis=0)
-#         left_line = make_coordinates(lane_image, left_fit_average)
-
-#     if right_fit:
-#         right_fit_average = np.average(right_fit, axis=0)
-#         right_line = make_coordinates(lane_image, right_fit_average)
-
-#     lines_to_draw = []
-#     if left_line is not None:
-#         lines_to_draw.append(left_line)
-#     if right_line is not None:
-#         lines_to_draw.append(right_line)
-
-#     return np.array(lines_to_draw) if lines_to_draw else None
-
-# def canny(image):
-#     gray = cv2.cvtColor(image, cv2.COLOR_RGB2GRAY)
-#     blur = cv2.GaussianBlur(gray, (5, 5), 0)
-#     canny = cv2.Canny(blur, 200, 300)
-#     return canny
-
-# def region_of_interest(image):
-#     height = image.shape[0]
-#     polygons = np.array([[(leftpoint, height), (rightpoint, height), toppoint]])
-#     mask = np.zeros_like(image)
-#     cv2.fillPoly(mask, polygons, 255)
-#     masked_image = cv2.bitwise_and(image, mask)
-#     return masked_image
-
-
-# # Cenipili
-# ##########################################################################
-# def compute_vanishing_point_angle(frame, lines):
-#     """
-#     Computes the steering angle (in degrees) using the vanishing point method.
-#     If both lane lines are detected, it computes their intersection (vanishing point)
-#     and then computes the angle between the vertical line (from bottom center of frame)
-#     and the line connecting bottom center to the vanishing point.
-    
-#     If only one line is detected, it falls back to a simpler method.
-#     """
-#     height, width, _ = frame.shape
-
-#     # Fallback if no line is detected.
-#     if lines is None or len(lines) == 0:
-#         return 0
-
-#     # When two lane lines are detected, compute their intersection.
-#     if len(lines) >= 2:
-#         # Assume the first two lines are the left and right lanes.
-#         # (You might want to refine how you choose these.)
-#         left_line = lines[0]
-#         right_line = lines[1]
-
-#         # Fit each line to y = m*x + b using its endpoints.
-#         # For left_line: (x1, y1, x2, y2)
-#         m1, b1 = np.polyfit([left_line[0], left_line[2]], [left_line[1], left_line[3]], 1)
-#         m2, b2 = np.polyfit([right_line[0], right_line[2]], [right_line[1], right_line[3]], 1)
-
-#         # To find the intersection:
-#         # m1*x + b1 = m2*x + b2  ->  x = (b2 - b1) / (m1 - m2)
-#         if (m1 - m2) == 0:
-#             # Parallel lines; fallback to simple method.
-#             return simple_steering_angle(frame, lines)
-#         x_intersect = (b2 - b1) / (m1 - m2)
-#         y_intersect = m1 * x_intersect + b1
-
-#         # The vanishing point is (x_intersect, y_intersect)
-#         # Bottom center of frame (assumed car's current heading) is:
-#         bottom_center = (width / 2, height)
-
-#         # Compute offsets from bottom center to the vanishing point:
-#         dx = x_intersect - bottom_center[0]
-#         dy = bottom_center[1] - y_intersect  # note: y decreases as we go up
-
-#         # Compute angle using arctan: a positive angle means steering right, negative means left.
-#         angle_rad = np.arctan2(dx, dy)
-#         angle_deg = np.degrees(angle_rad)
-#         return angle_deg
-
-#     else:
-#         # If only one line is detected, fallback to a simpler method.
-#         return simple_steering_angle(frame, lines)
-
-
-# def simple_steering_angle(frame, lines, max_angle=30):
-#     """
-#     Fallback method: when only one lane line is detected, use its bottom position relative to
-#     the image center to compute an angle.
-#     """
-#     height, width, _ = frame.shape
-#     line = lines[0]
-#     x1, y1, x2, y2 = line
-#     bottom_x = x1 if y1 > y2 else x2
-#     lane_center = bottom_x
-#     frame_center = width / 2.0
-#     error_pixels = lane_center - frame_center
-#     normalized_error = error_pixels / (width / 2.0)
-#     steering_angle = normalized_error * max_angle
-#     return steering_angle
-# #####################################################################################
-# def display_lines(image, lines):
-#     line_image = np.zeros_like(image)
-#     if lines is not None:
-#         for line in lines:
-#             # Skip if line is None
-#             if line is None:
-#                 continue
-#             try:
-#                 # Ensure line is a numpy array
-#                 line = np.array(line)
-#                 # Check if we have exactly four elements
-#                 if line.size != 4:
-#                     print("Skipping line due to unexpected shape:", line)
-#                     continue
-#                 # Convert to integers
-#                 x1, y1, x2, y2 = map(int, line.flatten())
-#                 # Draw the line
-#                 cv2.line(line_image, (x1, y1), (x2, y2), (0, 0, 255), 10)
-#             except Exception as e:
-#                 print("Error drawing line:", line, e)
-#                 continue
-#     return line_image
-
-# def get_steer(image):
-#     canny_image = canny(image)
-#     cropped_image = region_of_interest(canny_image)
-#     ## lines = cv2.HoughLinesP(cropped_image, 2, np.pi / 180, 300, np.array([]), minLineLength=100, maxLineGap=30)
-#     #lines = cv2.HoughLinesP(cropped_image, 2, np.pi / 180, 100, np.array([]), minLineLength=50, maxLineGap=30)
-#     lines = cv2.HoughLinesP(cropped_image, 2, np.pi / 180, 80, np.array([]), minLineLength=60, maxLineGap=30)
-#     averaged_lines = average_slope_intercept(image, lines)
-#     steering_angle = compute_steering_angle(image, averaged_lines)
-#     smoothed = update_smoothed_angle(steering_angle, alpha=0.3)
-#     ## final_angle = apply_deadzone(smoothed, threshold=3)
-#     final_angle = apply_deadzone(smoothed, threshold=10)
-#     final_angle = -(final_angle*250/30)
-#     # TODO: remove this during competition
-#     line_image = display_lines(image, averaged_lines)
-#     combo_image = cv2.addWeighted(image, 0.8, line_image, 1, 1)
-
-#     return final_angle, combo_image
-
+import time
 import cv2 # Import the OpenCV library to enable computer vision
 import numpy as np # Import the NumPy scientific computing libraryw
 import matplotlib.pyplot as plt # Used for plotting and error checking
@@ -238,7 +10,7 @@ import matplotlib.pyplot as plt # Used for plotting and error checking
 
 # Make sure the video file is in the same directory as your code
 filename = 'real-car.mp4'
-file_size = (1280,720) 
+file_size = (1280,720)
 scale_ratio = 1 # Option to scale to fraction of original size. 
 
 # We want to save the output to a video file
@@ -260,12 +32,19 @@ prev_righty2 = None
 prev_left_fit2 = []
 prev_right_fit2 = []
 
+ema_offset = None
 
 def canny(image):
     gray = cv2.cvtColor(image, cv2.COLOR_RGB2GRAY)
     blur = cv2.GaussianBlur(gray, (5, 5), 0)
-    canny = cv2.Canny(blur, 50, 150)
+    canny = cv2.Canny(blur, 100, 200)
     return canny
+
+def exponential_moving_average(new_value, prev_ema, alpha=0.2):
+    if prev_ema is None:
+        return new_value  # Initialize EMA on first value
+    return alpha * new_value + (1 - alpha) * prev_ema
+
 
 class Lane:
   """
@@ -278,6 +57,10 @@ class Lane:
     :param orig_frame: Original camera image (i.e. frame)
     """
     self.orig_frame = orig_frame
+
+    # The x offset for the right and left lane lines
+    self.rightx_offset = 305
+    self.leftx_offset = 205
 
     # This will hold an image with the lane lines		
     self.lane_line_markings = None
@@ -297,14 +80,18 @@ class Lane:
     height = self.orig_image_size[1]
     self.width = width
     self.height = height
+
+    self.not_left = 0
+    self.not_right = 0
+    self.no_of_lines = 0
 	
     # Four corners of the trapezoid-shaped region of interest
     # You need to find these corners manually.
     self.roi_points = np.float32([
-      (int(0.35*width),int(0.544*height)), # Top-left corner
-      (int(width * 0.2), height * 0.7), # Bottom-left corner			
-      (int(0.8*width),height * 0.7), # Bottom-right corner
-      (int(0.7*width),int(0.544*height)) # Top-right corner
+      (int(0.25*width),int(0.544*height)), # Top-left corner
+      (int(width * 0.15), height*0.8 - 1), # Bottom-left corner			
+      (int(0.85*width),height*0.8 - 1), # Bottom-right corner
+      (int(0.75*width),int(0.544*height)) # Top-right corner
     ])
 		
     # The desired corner locations  of the region of interest
@@ -341,8 +128,8 @@ class Lane:
     self.righty = None
 		
     # Pixel parameters for x and y dimensions
-    self.YM_PER_PIX = 7.0 / 400 # meters per pixel in y dimension
-    self.XM_PER_PIX = 3.7 / 255 # meters per pixel in x dimension
+    self.YM_PER_PIX = 4.0 / width # meters per pixel in y dimension
+    self.XM_PER_PIX = 2.7 / height # meters per pixel in x dimension
 		
     # Radii of curvature and offset
     self.left_curvem = None
@@ -511,13 +298,34 @@ class Lane:
     global prev_righty2
     global prev_left_fit2
     global prev_right_fit2
-		
-    # Make sure we have nonzero pixels		
-    if len(leftx)==0 or len(lefty)==0 or len(rightx)==0 or len(righty)==0:
-      leftx = prev_leftx2
-      lefty = prev_lefty2
-      rightx = prev_rightx2
-      righty = prev_righty2
+
+    LANE_WIDTH_PIXELS = 250  # You may need to fine-tune this for your camera setup
+
+    if len(leftx) == 0 or len(lefty) == 0:
+        # # print("Left lane missing, inferring from right lane")
+        self.not_left = 1
+        if right_fit is not None:
+            # Infer left_fit by shifting right_fit
+            left_fit = np.copy(right_fit)
+            left_fit[2] -= LANE_WIDTH_PIXELS
+            # Create synthetic left lane pixels (optional, to keep continuity)
+            leftx = prev_leftx
+            lefty = prev_lefty
+        else:
+            leftx = prev_leftx
+            lefty = prev_lefty
+
+    if len(rightx) == 0 or len(righty) == 0:
+        # # print("Right lane missing, inferring from left lane")
+        self.not_right = 1
+        if left_fit is not None:
+            right_fit = np.copy(left_fit)
+            right_fit[2] += LANE_WIDTH_PIXELS
+            rightx = prev_rightx
+            righty = prev_righty
+        else:
+            rightx = prev_rightx
+            righty = prev_righty
 
     self.leftx = leftx
     self.rightx = rightx
@@ -586,6 +394,7 @@ class Lane:
       result = cv2.addWeighted(out_img, 1, window_img, 0.3, 0)
       
       # Plot the figures 
+      '''
       figure, (ax1, ax2, ax3) = plt.subplots(3,1) # 3 rows, 1 column
       figure.set_size_inches(10, 10)
       figure.tight_layout(pad=3.0)
@@ -598,6 +407,7 @@ class Lane:
       ax2.set_title("Warped Frame")
       ax3.set_title("Warped Frame With Search Window")
       plt.show()
+      '''
 			
   def get_lane_line_indices_sliding_windows(self, plot=False):
     """
@@ -634,7 +444,7 @@ class Lane:
 
     # Go through one window at a time
     no_of_windows = self.no_of_windows
-		
+
     for window in range(no_of_windows):
       
       # Identify window boundaries in x and y (and right and left)
@@ -662,23 +472,29 @@ class Lane:
       right_lane_inds.append(good_right_inds)
         
       # If you found > minpix pixels, recenter next window on mean position
-      minpix = self.minpix
-      if len(good_left_inds) > minpix:
-        leftx_current = np.int32(np.mean(nonzerox[good_left_inds]))
-      else:
-         print("nu e detectata stanga")
-         rightx_avg = np.int32(np.mean(nonzerox[good_right_inds]))
-         leftx_current = rightx_avg - 160
+      try:
+        minpix = self.minpix
+        if len(good_left_inds) > minpix:
+          leftx_current = np.int32(np.mean(nonzerox[good_left_inds]))
+        else:
+          # print("nu e detectata stanga")
+          self.not_left = 1
+          rightx_avg = np.int32(np.mean(nonzerox[good_right_inds]))
+          leftx_current = rightx_avg - 160
+      except:
+        self.not_left = 1
         
-      
-      if len(good_right_inds) > minpix:        
-        rightx_current = np.int32(np.mean(nonzerox[good_right_inds]))
-      else:
-        print("nu e detectata dreapta")
-        leftx_avg = np.int32(np.mean(nonzerox[good_left_inds]))
-        rightx_current = leftx_avg + 160
-       
-     
+      try:
+        if len(good_right_inds) > minpix:        
+          rightx_current = np.int32(np.mean(nonzerox[good_right_inds]))
+        else:
+          # print("nu e detectata dreapta")
+          self.not_right = 1
+          leftx_avg = np.int32(np.mean(nonzerox[good_left_inds]))
+          rightx_current = leftx_avg + 160
+      except:
+        self.not_right = 1
+
     # Concatenate the arrays of indices
     left_lane_inds = np.concatenate(left_lane_inds)
     right_lane_inds = np.concatenate(right_lane_inds)
@@ -702,14 +518,42 @@ class Lane:
     global prev_right_fit
 
     # Make sure we have nonzero pixels		
-    if len(leftx)==0 or len(lefty)==0 or len(rightx)==0 or len(righty)==0:
-      leftx = prev_leftx
-      lefty = prev_lefty
-      rightx = prev_rightx
-      righty = prev_righty
+    LANE_WIDTH_PIXELS = 250  # You may need to fine-tune this for your camera setup
+
+    if len(leftx) == 0 or len(lefty) == 0:
+        # print("Left lane missing, inferring from right lane")
+        self.not_left = 1
+        if right_fit is not None:
+            # Infer left_fit by shifting right_fit
+            left_fit = np.copy(right_fit)
+            left_fit[2] -= LANE_WIDTH_PIXELS
+            # Create synthetic left lane pixels (optional, to keep continuity)
+            leftx = prev_leftx
+            lefty = prev_lefty
+        else:
+            leftx = prev_leftx
+            lefty = prev_lefty
+
+    if len(rightx) == 0 or len(righty) == 0:
+        # print("Right lane missing, inferring from left lane")
+        self.not_right = 1
+        if left_fit is not None:
+            right_fit = np.copy(left_fit)
+            right_fit[2] += LANE_WIDTH_PIXELS
+            rightx = prev_rightx
+            righty = prev_righty
+        else:
+            rightx = prev_rightx
+            righty = prev_righty
 		
-    left_fit = np.polyfit(lefty, leftx, 2)
-    right_fit = np.polyfit(righty, rightx, 2) 
+    try:
+      left_fit = np.polyfit(lefty, leftx, 2)
+    except np.RankWarning:
+      self.not_left = 1
+    try:
+      right_fit = np.polyfit(righty, rightx, 2)
+    except np.RankWarning:
+      self.not_right = 1
 
     # Add the latest polynomial coefficients		
     prev_left_fit.append(left_fit)
@@ -870,6 +714,7 @@ class Lane:
     if plot==True:
      
       # Plot the figures 
+      '''
       figure, (ax1, ax2) = plt.subplots(2,1) # 2 rows, 1 column
       figure.set_size_inches(10, 10)
       figure.tight_layout(pad=3.0)
@@ -878,6 +723,7 @@ class Lane:
       ax1.set_title("Original Frame")  
       ax2.set_title("Original Frame With Lane Overlay")
       plt.show()   
+      '''
 
     return result			
 	
@@ -944,7 +790,7 @@ class Lane:
 
   
 	
-def getSteer(frame):
+def getSteer1(frame, plot=False):
   # Process the video
     width = int(frame.shape[1] * scale_ratio)
     height = int(frame.shape[0] * scale_ratio)
@@ -979,22 +825,67 @@ def getSteer(frame):
     # Fill in the lane line
     lane_obj.get_lane_line_previous_window(left_fit, right_fit, plot=False)
         
+    forcedOffset = None
+
+    lane_obj.no_of_lines = 2
+    if lane_obj.not_left:
+      forcedOffset = 37.5
+      lane_obj.no_of_lines -= 1
+    if lane_obj.not_right:
+      forcedOffset = -37.5
+      lane_obj.no_of_lines -= 1
+
+    
+
     # Overlay lines on the original frame
     frame_with_lane_lines = lane_obj.overlay_lane_lines(plot=False)
 
     # Calculate lane line curvature (left and right lane lines)
-    lane_obj.calculate_curvature(print_to_terminal=False)
-
+    left_curve, right_curve = lane_obj.calculate_curvature(print_to_terminal=False)
+    
     # Calculate center offset  																
     offset = lane_obj.calculate_car_position(print_to_terminal=False)
-        
+    offset = offset - 15 # account for bias towards the left
+
+    if forcedOffset is not None:
+      offset = forcedOffset
+
+    global ema_offset
+    offset = exponential_moving_average(offset, ema_offset, alpha=0.2)
+    ema_offset = offset
+    out_offset = ema_offset
+
+    if forcedOffset is not None:
+      out_offset = forcedOffset
+    
+
+    
+    
     # Display curvature and center offset on image
     frame_with_lane_lines2 = lane_obj.display_curvature_offset(
         frame=frame_with_lane_lines, plot=False)
-                    
+    
+    # if left_curve < 10:
+    #   offset = 62.5
+    # elif right_curve < 10:
+    #   offset = -62.5
     # Write the frame to the output video file
-    return(offset, frame)
-			
+    return (out_offset, frame_with_lane_lines2, lane_obj.no_of_lines)
  
  
 
+def getSteer(frame):
+  try:
+    return getSteer1(frame)
+  except:
+    print("\no puscat\n")
+    return [0, 0, 0, frame, 0]
+  
+if __name__ == '__main__':
+  cap = cv2.VideoCapture('brain/src/perception/laneDetection/test-car.avi')
+  while(cap.isOpened()):
+    _, frame = cap.read()
+    if cv2.waitKey(1) ==  ord('q'):
+        break
+    time.sleep(0.1)
+    getSteer1(frame, plot=True)

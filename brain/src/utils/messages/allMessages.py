@@ -257,3 +257,63 @@ class laneDetectionSteering(Enum):
     Owner = "laneDetection"
     msgID = 2
     msgType = "str"
+
+class LineInFront(Enum):
+    Queue = "General"
+    Owner = "laneDetection"
+    msgID = 3
+    msgType = "bool"
+
+class StopSign(Enum):
+    Queue = "Warning"
+    Owner = "signDetection"
+    msgID = 1
+    msgType = "str"
+
+class PrioritySign(Enum):
+    Queue = "General"
+    Owner = "signDetection"
+    msgID = 2
+    msgType = "str"
+
+class HighwayEntrySign(Enum):
+    Queue = "General"
+    Owner = "signDetection"
+    msgID = 3
+    msgType = "str"
+
+class HighwayExitSign(Enum):
+    Queue = "General"
+    Owner = "signDetection"
+    msgID = 4
+    msgType = "str"
+
+class ParkingSign(Enum):
+    Queue = "General"
+    Owner = "signDetection"
+    msgID = 5
+    msgType = "str"
+
+class CrosswalkSign(Enum):
+    Queue = "General"
+    Owner = "signDetection"
+    msgID = 6
+    msgType = "str"
+
+class NoEntryRoadSign(Enum):
+    Queue = "General"
+    Owner = "signDetection"
+    msgID = 7
+    msgType = "str"
+
+class OneWayRoadSign(Enum):
+    Queue = "General"
+    Owner = "signDetection"
+    msgID = 8
+    msgType = "str"
+
+class RoundaboutSign(Enum):
+    Queue = "General"
+    Owner = "signDetection"
+    msgID = 9
+    msgType = "str"
