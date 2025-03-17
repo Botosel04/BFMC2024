@@ -54,6 +54,15 @@ class threadmove(ThreadWithStop):
                     self.steer.send("0")
                     self.driveMode = drv
                     print("Driving mode changed from auto")
+            
+            if self.driveMode == 'manual':
+                self.speed.send('100')
+                self.steer.send('-200')
+                time.sleep(2)
+                self.steer.send('0')
+                self.speed.send('0')
+                self.driveMode = 'stop'
+
             if self.driveMode == 'auto':
                 steer_angle = self.lane_detection_steering.receive()
                 if steer_angle:
@@ -81,7 +90,7 @@ class threadmove(ThreadWithStop):
                         print("STOPPING")
                         targetSpeed = "0"
                         self.sawStop = False
-                        time.sleep(1)
+                        time.sleep(3)
                         self.passingStop = True
                     if not lineInFront and self.passingStop:
                         self.passingStop = False
