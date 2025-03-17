@@ -47,6 +47,7 @@ class threadsignDetection(ThreadWithStop):
                 image_data = base64.b64decode(cam)
                 img = np.frombuffer(image_data, dtype=np.uint8)
                 image = cv2.imdecode(img, cv2.IMREAD_COLOR)
+                w, h, _ = image.shape
 
                 detect = self.model(image)
                 pred = detect.pop()
@@ -56,8 +57,8 @@ class threadsignDetection(ThreadWithStop):
                 print(detectProbs)
                 for coord in coords:
                     ss, dj = coord
-                    ss = [ss[0]/pred.orig_shape[0], ss[1]/pred.orig_shape[1]]
-                    dj = [dj[0]/pred.orig_shape[0], dj[1]/pred.orig_shape[1]]
+                    ss = [ss[0]/w, ss[1]/h]
+                    dj = [dj[0]/w, dj[1]/h]
                     print(ss, dj)
                 for prob, box in zip(detectProbs, coords):
                     name, tag, conf = prob
