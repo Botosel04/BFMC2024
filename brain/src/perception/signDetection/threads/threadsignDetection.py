@@ -56,11 +56,13 @@ class threadsignDetection(ThreadWithStop):
                 coords = [[[int(a) for a in sign[0:2]], [int(a) for a in sign[2:4]]] for sign in pred.boxes.data]
 
                 print(detectProbs)
+                '''
                 for coord in coords:
                     ss, dj = coord
                     ss = [ss[0]/w, ss[1]/h]
                     dj = [dj[0]/w, dj[1]/h]
-                    print(ss, dj)
+                    print(ss, dj)'
+                '''
                 for prob, box in zip(detectProbs, coords):
                     name, tag, conf = prob
                     on_right = (box[0][0] + box[1][0]) / 2 > pred.orig_shape[0]
