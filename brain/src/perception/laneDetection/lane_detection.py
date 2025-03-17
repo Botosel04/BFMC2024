@@ -538,11 +538,11 @@ class Lane:
 		
     try:
       left_fit = np.polyfit(lefty, leftx, 2)
-    except:
+    except np.RankWarning:
       self.not_left = 1
     try:
       right_fit = np.polyfit(righty, rightx, 2)
-    except:
+    except np.RankWarning:
       self.not_right = 1
 
     # Add the latest polynomial coefficients		
