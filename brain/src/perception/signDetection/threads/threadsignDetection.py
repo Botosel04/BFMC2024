@@ -60,30 +60,8 @@ class threadsignDetection(ThreadWithStop):
                 '''
 
                 print(detectProbs, coords)
-                for name, tag, prob, box in zip(detectProbs, coords):
+                for prob, box in zip(detectProbs, coords):
+                    name, tag, conf = prob
                     on_right = (box[0][0] + box[1][0]) / 2 > pred.orig_shape[0]
                     message = "right" if on_right else "left"
                     self.events[tag].send(message)
-                
-'''
-                for i in range(len(pred.boxes.cls)):
-                    on_right = (pred.boxes.xyxy[i][0] + pred.boxes.xyxy[i][2]) / 2 > pred.orig_shape[0]
-                    if int(pred.boxes.cls[i]) == 0 and on_right:
-                        self.cross_walk.send("")
-                    elif int(pred.boxes.cls[i]) == 1 and on_right:
-                        self.highway_entry.send("")
-                    elif int(pred.boxes.cls[i]) == 2 and on_right:
-                        self.highway_exit.send("")
-                    elif int(pred.boxes.cls[i]) == 3:
-                        self.no_entry.send("right" if on_right else "left")
-                    elif int(pred.boxes.cls[i]) == 4 and on_right:
-                        self.one_way.send("")
-                    elif int(pred.boxes.cls[i]) == 5 and on_right:
-                        self.parking.send("")
-                    elif int(pred.boxes.cls[i]) == 6 and on_right:
-                        self.priority.send("")
-                    elif int(pred.boxes.cls[i]) == 7 and on_right:
-                        self.roundabout.send("")
-                    elif int(pred.boxes.cls[i]) == 8 and on_right:
-                        self.stop_sign.send("")
-'''
