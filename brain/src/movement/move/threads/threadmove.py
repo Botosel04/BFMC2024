@@ -33,6 +33,8 @@ class threadmove(ThreadWithStop):
 
 
         self.stop_sign = messageHandlerSubscriber(self.queuesList, StopSign, "lastOnly", True)
+        self.cross_walk_sign = messageHandlerSubscriber(self.queuesList, CrosswalkSign, "lastOnly", True)
+
 
         self.driveMode = "stop"
         self.driveState = True
@@ -44,6 +46,7 @@ class threadmove(ThreadWithStop):
         self.passingStop = False
 
         self.onHighway = False
+        
 
     def run(self):
         while self._running:
