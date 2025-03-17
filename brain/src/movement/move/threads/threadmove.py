@@ -25,7 +25,6 @@ class threadmove(ThreadWithStop):
         self.speed = messageHandlerSender(self.queuesList, SpeedMotor)
         self.steer = messageHandlerSender(self.queuesList, SteerMotor)
         self.driving_mode = messageHandlerSubscriber(self.queuesList, DrivingMode, "lastOnly", True)
-        self.signs = messageHandlerSubscriber(self.queuesList, DetectedSigns, "fifo", True)
         self.lane_detection_steering = messageHandlerSubscriber(self.queuesList, laneDetectionSteering, "lastOnly", True)
 
         self.driveMode = "stop"

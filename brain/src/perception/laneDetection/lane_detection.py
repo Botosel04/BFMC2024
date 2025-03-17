@@ -846,7 +846,7 @@ def getSteer(frame):
     return getSteer1(frame)
   except:
     print("\no puscat\n")
-    return 0
+    return [0, 0, 0, None, 0]
   
 if __name__ == '__main__':
   cap = cv2.VideoCapture('brain/src/perception/laneDetection/test-car.avi')
