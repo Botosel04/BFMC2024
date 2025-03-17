@@ -32,7 +32,7 @@ class threadlaneDetection(ThreadWithStop):
 
         self.wid = 512
 
-        self.roi = [[150, 175], [int(self.wid*0.25), int(self.wid*0.75)]]
+        self.roi = [[165, 175], [int(self.wid*0.25), int(self.wid*0.75)]]
         self.roisize = (175 - 168) * (int(self.wid*0.75) - int(self.wid*0.25))
 
     def run(self):
@@ -46,7 +46,7 @@ class threadlaneDetection(ThreadWithStop):
 
                 cropped = image[self.roi[0][0]:self.roi[0][1], self.roi[1][0]:self.roi[1][1]]
                 self.whiteForLine = self.countWhitePixels(cropped)
-                if self.whiteForLine > self.roisize * 0.5:
+                if self.whiteForLine > self.roisize * 0.3:
                     print("Detected Line in front")
 
                 steer_angle, processed_image, no_of_lines = getSteer(image)
