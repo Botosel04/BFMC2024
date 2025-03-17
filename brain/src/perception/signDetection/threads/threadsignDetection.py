@@ -36,7 +36,7 @@ class threadsignDetection(ThreadWithStop):
                 cam = self.camera.receive()
                 self.frameCount += 1
 
-                if self.frameCount % 30 != 0:
+                if self.frameCount % 2 != 0:
                     continue
 
                 self.frameCount = 0
@@ -51,4 +51,4 @@ class threadsignDetection(ThreadWithStop):
                 detect = self.model(image)
                 pred = detect.pop()
                 detectProbs = [[pred.names[int(a)], float(b)] for a, b in list(zip(pred.boxes.cls, pred.boxes.conf))]
-                print(detectProbs)
+                coords = [[[int(a) for a in sign[0:2]], [int(a) for a in sign[2:4]]] for sign in pred.boxes.data]
