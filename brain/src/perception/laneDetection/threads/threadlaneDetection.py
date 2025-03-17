@@ -27,6 +27,7 @@ class threadlaneDetection(ThreadWithStop):
         self.steer = messageHandlerSender(self.queuesList, laneDetectionSteering)
         self.lineInFront = messageHandlerSender(self.queuesList, LineInFront)
         self.camera = messageHandlerSubscriber(self.queuesList, serialCamera, "lastOnly", True)
+        
 
         self.last_angle = 0.0
         self.frameCount = 0
@@ -86,6 +87,16 @@ class threadlaneDetection(ThreadWithStop):
         imgThreshHigh = cv2.inRange(image, lower_red, upper_red)
         nr_pix = np.sum(imgThreshHigh == 255)
         return nr_pix
+    
+    def countPinkPixels(self, image):
+        hsv = cv2.cvtColor(image, cv2.COLOR_BGR2HSV)
+        lower_pink = np.array([145,50,50]) 
+        upper_pink  = np.array([170,255,255])
+
+        imgThreshHigh = cv2.inRange(hsv, lower_pink, upper_pink)
+        nr_pix = np.sum(imgThreshHigh == 255)
+        return nr_pix
+
 
 
     def subscribe(self):

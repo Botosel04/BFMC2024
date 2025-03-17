@@ -28,6 +28,9 @@ class threadmove(ThreadWithStop):
         self.driving_mode = messageHandlerSubscriber(self.queuesList, DrivingMode, "lastOnly", True)
         self.lane_detection_steering = messageHandlerSubscriber(self.queuesList, laneDetectionSteering, "lastOnly", True)
         self.line_in_front = messageHandlerSubscriber(self.queuesList, LineInFront, "lastOnly", True)
+        self.highway_enter = messageHandlerSubscriber(self.queuesList, HighwayEntrySign, "lastOnly", True)
+        self.highway_exit = messageHandlerSubscriber(self.queuesList, HighwayExitSign, "lastOnly", True)
+
 
         self.stop_sign = messageHandlerSubscriber(self.queuesList, StopSign, "lastOnly", True)
 
@@ -39,6 +42,8 @@ class threadmove(ThreadWithStop):
 
         self.sawStop = False
         self.passingStop = False
+
+        self.onHighway = False
 
     def run(self):
         while self._running:
@@ -80,6 +85,15 @@ class threadmove(ThreadWithStop):
                         self.passingStop = True
                     if not lineInFront and self.passingStop:
                         self.passingStop = False
+                
+                highwayEnter = self.highway_enter.receive()
+                highwayExit = self.highway_exit.receive()
+                if not self.onHighway and highwayEnter:
+                    self.onHighway = True
+                    self.speed.send("400")  
+                if self.onHighway and highwayExit:
+                    self.onHighway = False
+                    self.speed.send("100")
             
 
     def subscribe(self):
