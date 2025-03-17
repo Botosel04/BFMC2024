@@ -79,8 +79,8 @@ class Lane:
     # You need to find these corners manually.
     self.roi_points = np.float32([
       (int(0.25*width),int(0.544*height)), # Top-left corner
-      (int(width * 0.15), height*0.8 - 1), # Bottom-left corner			
-      (int(0.85*width),height*0.8 - 1), # Bottom-right corner
+      (int(width * 0.15), height - 1), # Bottom-left corner			
+      (int(0.85*width),height - 1), # Bottom-right corner
       (int(0.75*width),int(0.544*height)) # Top-right corner
     ])
 		
@@ -820,6 +820,8 @@ def getSteer1(frame, plot=False):
       lane_obj.no_of_lines -= 1
     if lane_obj.not_right:
       lane_obj.no_of_lines -= 1
+
+
 
     # Overlay lines on the original frame
     frame_with_lane_lines = lane_obj.overlay_lane_lines(plot=False)
