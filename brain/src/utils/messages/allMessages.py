@@ -262,28 +262,28 @@ class StopSign(Enum):
     Queue = "Warning"
     Owner = "signDetection"
     msgID = 1
-    msgType = "DetectionData"
+    msgType = "str"
 
 class PrioritySign(Enum):
     Queue = "General"
     Owner = "signDetection"
     msgID = 2
-    msgType = "DetectionData"
+    msgType = "str"
 
 class HighwayEntrySign(Enum):
     Queue = "General"
     Owner = "signDetection"
     msgID = 3
-    msgType = "DetectionData"
+    msgType = "str"
 
 class HighwayExitSign(Enum):
     Queue = "General"
     Owner = "signDetection"
     msgID = 4
-    msgType = "DetectionData"
+    msgType = "str"
 
 class ParkingSign(Enum):
     Queue = "General"
     Owner = "signDetection"
     msgID = 5
-    msgType = "DetectionData"
+    msgType = "str"

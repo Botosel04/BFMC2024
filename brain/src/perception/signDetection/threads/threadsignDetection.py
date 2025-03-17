@@ -8,23 +8,6 @@ import base64
 import numpy as np
 from ultralytics import YOLO
 
-class DetectionData:
-    LEFT = 0
-    RIGHT = 0
-
-    def __init__(self, conf, xyxy, orig_img: Tuple[int, int]):
-        self.conf = float(conf)
-        if (xyxy[0] + xyxy[2]) / 2 < orig_img[0]:
-            self.side = DetectionData.LEFT
-        else:
-            self.side = DetectionData.RIGHT
-
-    def is_left(self):
-        return self.side == DetectionData.LEFT
-
-    def is_right(self):
-        return self.side == DetectionData.RIGHT
-
 class threadsignDetection(ThreadWithStop):
     """This thread handles signDetection.
     Args:
@@ -42,8 +25,7 @@ class threadsignDetection(ThreadWithStop):
         self.camera = messageHandlerSubscriber(self.queuesList, mainCamera, "lastOnly", True)
 
         self.frameCount = 0
-
-        self.model = YOLO("src/perception/models/best_ncnn_model")
+self.model = YOLO("src/perception/models/best_ncnn_model")
         #self.model = YOLO("src/perception/models/best.pt")
 
         self.stop_sign = messageHandlerSender(self.queuesList, StopSign)
@@ -71,6 +53,6 @@ class threadsignDetection(ThreadWithStop):
                 detectProbs = [[pred.names[int(a)], float(b)] for a, b in list(zip(pred.boxes.cls, pred.boxes.conf))]
                 coords = [[[int(a) for a in sign[0:2]], [int(a) for a in sign[2:4]]] for sign in pred.boxes.data]
                 for i in range(len(pred.boxes.cls)):
-                    detection = DetectionData(pred.boxes.conf[i], pred.boxes.xyxy[i], pred.orig_shape)
-                    if int(pred.boxes.cls[i]) == 8:
-                        self.stop_sign.send(detection)
+                    on_right = (pred.boxes.xyxy[i][0] + pred.boxes.xyxy[i][2]) / 2 > pred.orig_shape[0]
+                    if int(pred.boxes.cls[i]) == 8 and on_right:
+                        self.stop_sign.send("")
