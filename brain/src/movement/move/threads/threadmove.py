@@ -4,7 +4,8 @@ import time
 import cv2
 import numpy as np
 from src.templates.threadwithstop import ThreadWithStop
-from src.utils.messages.allMessages import (DrivingMode, SpeedMotor, SteerMotor, laneDetectionSteering)
+from src.utils.messages.allMessages import (DrivingMode, SpeedMotor, SteerMotor, laneDetectionSteering, LineInFront)
+from src.utils.messages.allMessages import (StopSign, PrioritySign, HighwayEntrySign, HighwayExitSign, ParkingSign, CrosswalkSign, NoEntryRoadSign, OneWayRoadSign, RoundaboutSign)
 from src.utils.messages.messageHandlerSubscriber import messageHandlerSubscriber
 from src.utils.messages.messageHandlerSender import messageHandlerSender
 class threadmove(ThreadWithStop):
@@ -26,6 +27,9 @@ class threadmove(ThreadWithStop):
         self.steer = messageHandlerSender(self.queuesList, SteerMotor)
         self.driving_mode = messageHandlerSubscriber(self.queuesList, DrivingMode, "lastOnly", True)
         self.lane_detection_steering = messageHandlerSubscriber(self.queuesList, laneDetectionSteering, "lastOnly", True)
+        self.line_in_front = messageHandlerSubscriber(self.queuesList, LineInFront, "lastOnly", True)
+
+        self.stop_sign = messageHandlerSubscriber(self.queuesList, StopSign, "lastOnly", True)
 
         self.driveMode = "stop"
         self.driveState = True
@@ -33,23 +37,45 @@ class threadmove(ThreadWithStop):
         self.citySpeed = [200, 400]
         self.highwaySpeed = [400, 600]
 
+        self.sawStop = False
+        self.passingStop = False
+
     def run(self):
         while self._running:
             drv = self.driving_mode.receive()
             if drv is not None:
                 if drv == "auto":
-                    self.speed.send("400")
-                    self.driveMode = drv
                     print("Driving mode set to auto")
+                    self.speed.send("100")
+                    self.driveMode = drv
+
+                    steer_angle = self.lane_detection_steering.receive()
+                    if steer_angle:
+                        self.steer.send(steer_angle)
+                    
+                    lineInFront = self.line_in_front.receive()
+                    stopSign = self.stop_sign.receive()
+
+                    if stopSign:
+                        if not self.passingStop:
+                            self.sawStop = True
+
+                    if lineInFront:
+                        if lineInFront == "True" and self.sawStop:
+                            self.speed.send("0")
+                            self.sawStop = False
+                            time.sleep(1)
+                            self.speed.send("100")
+                            self.passingStop = True
+                        if lineInFront == "False" and self.passingStop:
+                            self.passingStop = False
+
                 elif drv in ["manual", "legacy", "stop"]:
                     self.speed.send("0")
                     self.steer.send("0")
                     self.driveMode = drv
                     print("Driving mode changed from auto")
-
-            steer_angle = self.lane_detection_steering.receive()
-            if steer_angle:
-                self.steer.send(steer_angle)
+            
 
     def subscribe(self):
         """Subscribes to the messages you are interested in"""

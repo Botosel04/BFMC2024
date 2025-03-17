@@ -258,6 +258,12 @@ class laneDetectionSteering(Enum):
     msgID = 2
     msgType = "str"
 
+class LineInFront(Enum):
+    Queue = "General"
+    Owner = "laneDetection"
+    msgID = 3
+    msgType = "bool"
+
 class StopSign(Enum):
     Queue = "Warning"
     Owner = "signDetection"

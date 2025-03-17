@@ -3,7 +3,7 @@ import base64
 import cv2
 import numpy as np
 from src.templates.threadwithstop import ThreadWithStop
-from src.utils.messages.allMessages import (laneDetectionSteering, mainCamera, serialCamera, processedCamera)
+from src.utils.messages.allMessages import (laneDetectionSteering, mainCamera, serialCamera, processedCamera, LineInFront)
 from src.utils.messages.messageHandlerSubscriber import messageHandlerSubscriber
 from src.utils.messages.messageHandlerSender import messageHandlerSender
 from src.perception.laneDetection.lane_detection import getSteer
@@ -25,6 +25,7 @@ class threadlaneDetection(ThreadWithStop):
         super(threadlaneDetection, self).__init__()
 
         self.steer = messageHandlerSender(self.queuesList, laneDetectionSteering)
+        self.lineInFront = messageHandlerSender(self.queuesList, LineInFront)
         self.camera = messageHandlerSubscriber(self.queuesList, serialCamera, "lastOnly", True)
 
         self.last_angle = 0.0
@@ -47,7 +48,9 @@ class threadlaneDetection(ThreadWithStop):
                 cropped = image[self.roi[0][0]:self.roi[0][1], self.roi[1][0]:self.roi[1][1]]
                 self.whiteForLine = self.countWhitePixels(cropped)
                 if self.whiteForLine > self.roisize * 0.1:
-                    print("Detected Line in front")
+                    self.lineInFront.send("True")
+                else:
+                    self.lineInFront.send("False")
 
                 steer_angle, processed_image, no_of_lines = getSteer(image)
 
