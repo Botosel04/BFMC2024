@@ -34,7 +34,9 @@ class threadlaneDetection(ThreadWithStop):
 
         self.wid = 512
 
-        self.roi = [[170, 200], [int(self.wid*0.3), int(self.wid*0.7)]]
+        self.lane_roi = [[170, 200], [int(self.wid*0.3), int(self.wid*0.7)]]
+        self.pedestrian_roi = [[180, 205], [int(self.wid*0.3), int(self.wid*0.7)]]
+
         self.roisize = (200 - 170) * (int(self.wid*0.7) - int(self.wid*0.3))
 
     def run(self):
@@ -46,12 +48,22 @@ class threadlaneDetection(ThreadWithStop):
                 img = np.frombuffer(image_data, dtype=np.uint8)
                 image = cv2.imdecode(img, cv2.IMREAD_COLOR)
 
-                cropped = image[self.roi[0][0]:self.roi[0][1], self.roi[1][0]:self.roi[1][1]]
-                self.whiteForLine = self.countWhitePixels(cropped)
+                #transversal lane detection
+                cropped_lane = image[self.lane_roi[0][0]:self.lane_roi[0][1], self.lane_roi[1][0]:self.lane_roi[1][1]]
+                self.whiteForLine = self.countWhitePixels(cropped_lane)
                 if self.whiteForLine > self.roisize * 0.1:
                     self.lineInFront.send(True)
                 else:
                     self.lineInFront.send(False)
+
+
+                #pedestrain detection
+                cropped_pedestrian = image[self.pedestrian_roi[0][0]:self.pedestrian_roi[0][1], self.pedestrian_roi[1][0]:self.pedestrian_roi[1][1]]
+                self.existPedestrian = self.countPinkPixels(cropped_pedestrian)
+                if self.existPedestrian > 0:
+                    self.pedestrian.send(True)
+                else:
+                    self.pedestrian.send(False)
 
                 steer_angle, processed_image, no_of_lines = getSteer(image)
 
@@ -88,12 +100,11 @@ class threadlaneDetection(ThreadWithStop):
         nr_pix = np.sum(imgThreshHigh == 255)
         return nr_pix
     
-    def countPinkPixels(self, image):
-        hsv = cv2.cvtColor(image, cv2.COLOR_BGR2HSV)
-        lower_pink = np.array([145,50,50]) 
-        upper_pink  = np.array([170,255,255])
+    def countPinkPixels(image):
+        lower_pink = np.array([120, 100, 180])  # B, G, R
+        upper_pink = np.array([180, 140, 255])
 
-        imgThreshHigh = cv2.inRange(hsv, lower_pink, upper_pink)
+        imgThreshHigh = cv2.inRange(image, lower_pink, upper_pink)
         nr_pix = np.sum(imgThreshHigh == 255)
         return nr_pix
 
