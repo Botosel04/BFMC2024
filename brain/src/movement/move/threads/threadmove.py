@@ -47,7 +47,7 @@ class threadmove(ThreadWithStop):
             if drv is not None:
                 if drv == "auto":
                     print("Driving mode set to auto")
-                    self.speed.send("100")
+                    # self.speed.send("100")
                     self.driveMode = drv
                 elif drv in ["manual", "legacy", "stop"]:
                     self.speed.send("0")
@@ -74,7 +74,7 @@ class threadmove(ThreadWithStop):
                 if not self.onHighway and highwayEnter:
                     self.onHighway = True
                     targetSpeed = threadmove.HIGHWAY_SPEED
-                if self.onHighway and highwayExit:
+                elif self.onHighway and highwayExit:
                     self.onHighway = False
                     targetSpeed = threadmove.NORMAL_SPEED
                 lineInFront = self.line_in_front.receive()
