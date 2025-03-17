@@ -53,15 +53,10 @@ class threadsignDetection(ThreadWithStop):
                 detectProbs = [[pred.names[int(a)], int(b), float(c)] for a, b, c in list(zip(pred.boxes.cls, pred.boxes.cls, pred.boxes.conf))]
                 coords = [[[int(a) for a in sign[0:2]], [int(a) for a in sign[2:4]]] for sign in pred.boxes.data]
 
-                '''
-                for name, prob, coord in zip(detectProbs, coords):
-                    if name == "Crosswalk":
-                        self.send'
-                '''
-
-                print(detectProbs, coords)
+                print(detectProbs)
                 for prob, box in zip(detectProbs, coords):
                     name, tag, conf = prob
                     on_right = (box[0][0] + box[1][0]) / 2 > pred.orig_shape[0]
                     message = "right" if on_right else "left"
-                    self.events[tag].send(message)
+                    if conf > 0.7:
+                        self.events[tag].send(message)
