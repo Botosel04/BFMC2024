@@ -48,9 +48,9 @@ class threadlaneDetection(ThreadWithStop):
                 cropped = image[self.roi[0][0]:self.roi[0][1], self.roi[1][0]:self.roi[1][1]]
                 self.whiteForLine = self.countWhitePixels(cropped)
                 if self.whiteForLine > self.roisize * 0.1:
-                    self.lineInFront.send("True")
+                    self.lineInFront.send(True)
                 else:
-                    self.lineInFront.send("False")
+                    self.lineInFront.send(False)
 
                 steer_angle, processed_image, no_of_lines = getSteer(image)
 

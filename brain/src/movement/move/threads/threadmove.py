@@ -61,13 +61,13 @@ class threadmove(ThreadWithStop):
                             self.sawStop = True
 
                     if lineInFront:
-                        if lineInFront == "True" and self.sawStop:
+                        if lineInFront and self.sawStop:
                             self.speed.send("0")
                             self.sawStop = False
                             time.sleep(1)
                             self.speed.send("100")
                             self.passingStop = True
-                        if lineInFront == "False" and self.passingStop:
+                        if not lineInFront and self.passingStop:
                             self.passingStop = False
 
                 elif drv in ["manual", "legacy", "stop"]:
