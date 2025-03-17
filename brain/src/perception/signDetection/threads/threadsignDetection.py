@@ -22,7 +22,7 @@ class threadsignDetection(ThreadWithStop):
         self.debugging = debugging
         super(threadsignDetection, self).__init__()
 
-        self.camera = messageHandlerSubscriber(self.queuesList, mainCamera, "lastOnly", True)
+        self.camera = messageHandlerSubscriber(self.queuesList, serialCamera, "lastOnly", True)
 
         self.frameCount = 0
         self.model = YOLO("src/perception/models/best_ncnn_model")
