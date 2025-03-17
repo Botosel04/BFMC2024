@@ -60,7 +60,7 @@ class threadlaneDetection(ThreadWithStop):
                 #pedestrain detection
                 cropped_pedestrian = image[self.pedestrian_roi[0][0]:self.pedestrian_roi[0][1], self.pedestrian_roi[1][0]:self.pedestrian_roi[1][1]]
                 self.existPedestrian = self.countPinkPixels(cropped_pedestrian)
-                if self.existPedestrian > 0:
+                if self.existPedestrian > 10:
                     self.pedestrian.send(True)
                 else:
                     self.pedestrian.send(False)
@@ -100,7 +100,7 @@ class threadlaneDetection(ThreadWithStop):
         nr_pix = np.sum(imgThreshHigh == 255)
         return nr_pix
     
-    def countPinkPixels(image):
+    def countPinkPixels(self, image):
         lower_pink = np.array([120, 100, 180])  # B, G, R
         upper_pink = np.array([180, 140, 255])
 
