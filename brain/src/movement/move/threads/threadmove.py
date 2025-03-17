@@ -47,18 +47,25 @@ class threadmove(ThreadWithStop):
                 if drv == "auto":
                     print("Driving mode set to auto")
                     self.speed.send(self.currentSpeed)
+                    self.speed.send(self.currentSpeed)
                     self.driveMode = drv
                 elif drv in ["manual", "legacy", "stop"]:
                     self.speed.send("0")
+                    self.speed.send("0")
+                    self.steer.send("0")
                     self.steer.send("0")
                     self.driveMode = drv
                     print("Driving mode changed from auto")
             
             if self.driveMode == 'manual':
                 self.speed.send('100')
+                self.speed.send('100')
+                self.steer.send('-170')
                 self.steer.send('-170')
                 time.sleep(7)
                 self.steer.send('0')
+                self.steer.send('0')
+                self.speed.send('0')
                 self.speed.send('0')
                 self.driveMode = 'stop'
 
@@ -68,6 +75,7 @@ class threadmove(ThreadWithStop):
                     self.steer.send(steer_angle)
 
                 targetSpeed = self.currentSpeed
+
                 highwayEnter = False
                 highwayExit = False
                 if self.highway_enter.isDataInPipe():
@@ -98,8 +106,10 @@ class threadmove(ThreadWithStop):
                         if lineInFront and self.sawStop:
                             print("STOPPING")
                             self.speed.send("0")
+                            self.speed.send("0")
                             self.sawStop = False
                             time.sleep(3)
+                            self.speed.send(self.currentSpeed)
                             self.speed.send(self.currentSpeed)
                             self.passingStop = True
                         if not lineInFront and self.passingStop:
@@ -109,6 +119,7 @@ class threadmove(ThreadWithStop):
                 if self.currentSpeed != targetSpeed:
                     print("CHANGED SPEED")
                     self.currentSpeed = targetSpeed
+                    self.speed.send(self.currentSpeed)
                     self.speed.send(self.currentSpeed)
 
     def subscribe(self):

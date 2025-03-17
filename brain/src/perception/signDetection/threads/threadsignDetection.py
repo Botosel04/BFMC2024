@@ -37,7 +37,7 @@ class threadsignDetection(ThreadWithStop):
                 cam = self.camera.receive()
                 self.frameCount += 1
 
-                if self.frameCount % 30 != 0:
+                if self.frameCount % 20 != 0:
                     continue
 
                 self.frameCount = 0
@@ -67,5 +67,5 @@ class threadsignDetection(ThreadWithStop):
                     name, tag, conf = prob
                     on_right = (box[0][0] + box[1][0]) / 2 > pred.orig_shape[0]
                     message = "right" if on_right else "left"
-                    if conf >= self.confList[tag]:
-                        self.events[tag].send(message)
+                    #if conf >= self.confList[tag]:
+                    self.events[tag].send(message)

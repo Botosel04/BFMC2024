@@ -90,7 +90,7 @@ class threadlaneDetection(ThreadWithStop):
 
                 
 
-                self.frameCount += 1
+                self.frameCount += 2
                 if self.frameCount % 15 == 0:
                     print(steer_angle)
                     print("No. of lines: ", no_of_lines)
@@ -111,7 +111,7 @@ class threadlaneDetection(ThreadWithStop):
     
     def countPinkPixels(self, image):
         lower_pink = np.array([120, 100, 180])  # B, G, R
-        upper_pink = np.array([180, 140, 255])
+        upper_pink = np.array([180, 160, 255])
 
         imgThreshHigh = cv2.inRange(image, lower_pink, upper_pink)
         nr_pix = np.sum(imgThreshHigh == 255)
