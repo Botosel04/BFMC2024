@@ -44,6 +44,7 @@ import sys
 import subprocess
 
 from src.perception.laneDetection.processlaneDetection import processlaneDetection
+from src.perception.signDetection.processsignDetection import processsignDetection
 from src.movement.move.processmove import processmove
 
 sys.path.append(".")
@@ -133,6 +134,9 @@ if Movement:
 if Perception:
     processLaneDetection = processlaneDetection(queueList, logging, debugging = False)
     allProcesses.append(processLaneDetection)
+
+    processSignDetection = processsignDetection(queueList, logging, debugging = False)
+    allProcesses.append(processSignDetection)
 
 # ------ New component runs starts here ------#
  
