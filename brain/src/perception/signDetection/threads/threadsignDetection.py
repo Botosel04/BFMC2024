@@ -36,7 +36,7 @@ class threadsignDetection(ThreadWithStop):
                 cam = self.camera.receive()
                 self.frameCount += 1
 
-                if self.frameCount % 2 != 0:
+                if self.frameCount % 30 != 0:
                     continue
 
                 self.frameCount = 0
