@@ -38,7 +38,7 @@ class threadmove(ThreadWithStop):
             drv = self.driving_mode.receive()
             if drv is not None:
                 if drv == "auto":
-                    self.speed.send("500")
+                    self.speed.send("400")
                     self.driveMode = drv
                     print("Driving mode set to auto")
                 elif drv in ["manual", "legacy", "stop"]:
