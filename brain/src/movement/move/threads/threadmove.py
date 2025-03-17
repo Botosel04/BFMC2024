@@ -16,6 +16,9 @@ class threadmove(ThreadWithStop):
         debugging (bool, optional): A flag for debugging. Defaults to False.
     """
 
+    NORMAL_SPEED = "200"
+    HIGHWAY_SPEED = "400"
+
     def __init__(self, queueList, logging, debugging=False):
         self.queuesList = queueList
         self.logging = logging
@@ -48,6 +51,8 @@ class threadmove(ThreadWithStop):
         self.onHighway = False
         
 
+        self.currentSpeed = threadmove.NORMAL_SPEED
+
     def run(self):
         while self._running:
             drv = self.driving_mode.receive()
@@ -67,7 +72,16 @@ class threadmove(ThreadWithStop):
                 steer_angle = self.lane_detection_steering.receive()
                 if steer_angle:
                     self.steer.send(steer_angle)
-                
+
+                targetSpeed = self.currentSpeed
+                highwayEnter = self.highway_enter.receive()
+                highwayExit = self.highway_exit.receive()
+                if not self.onHighway and highwayEnter:
+                    self.onHighway = True
+                    targetSpeed = threadmove.HIGHWAY_SPEED
+                if self.onHighway and highwayExit:
+                    self.onHighway = False
+                    targetSpeed = threadmove.NORMAL_SPEED
                 lineInFront = self.line_in_front.receive()
                 stopSign = self.stop_sign.receive()
 
@@ -76,29 +90,21 @@ class threadmove(ThreadWithStop):
                         print("SAW STOP")
                         self.sawStop = True
 
-                if self.passingStop:
-                    self.speed.send("100")
-
                 if lineInFront is not None:
                     if lineInFront and self.sawStop:
                         print("STOPPING")
-                        self.speed.send("0")
+                        targetSpeed = "0"
                         self.sawStop = False
                         time.sleep(1)
                         self.passingStop = True
                     if not lineInFront and self.passingStop:
                         self.passingStop = False
-                
-                highwayEnter = self.highway_enter.receive()
-                highwayExit = self.highway_exit.receive()
-                if not self.onHighway and highwayEnter:
-                    self.onHighway = True
-                    self.speed.send("400")  
-                if self.onHighway and highwayExit:
-                    self.onHighway = False
-                    self.speed.send("100")
-            
+
+                if self.currentSpeed 
+                self.speed.send(self.currentSpeed)
+
 
     def subscribe(self):
         """Subscribes to the messages you are interested in"""
         pass
+
