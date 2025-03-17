@@ -39,7 +39,6 @@ class threadmove(ThreadWithStop):
         self.intersection = 'none'
 
         self.currentSpeed = threadmove.NORMAL_SPEED
-        self.speed.send(self.currentSpeed)
 
     def run(self):
         while self._running:
@@ -47,7 +46,7 @@ class threadmove(ThreadWithStop):
             if drv is not None:
                 if drv == "auto":
                     print("Driving mode set to auto")
-                    self.speed.send("100")
+                    self.speed.send(self.currentSpeed)
                     self.driveMode = drv
                 elif drv in ["manual", "legacy", "stop"]:
                     self.speed.send("0")
@@ -58,7 +57,7 @@ class threadmove(ThreadWithStop):
             if self.driveMode == 'manual':
                 self.speed.send('100')
                 self.steer.send('-200')
-                time.sleep(2)
+                time.sleep(4)
                 self.steer.send('0')
                 self.speed.send('0')
                 self.driveMode = 'stop'
@@ -69,33 +68,46 @@ class threadmove(ThreadWithStop):
                     self.steer.send(steer_angle)
 
                 targetSpeed = self.currentSpeed
-                highwayEnter = self.highway_enter.receive()
-                highwayExit = self.highway_exit.receive()
+                highwayEnter = False
+                highwayExit = False
+                if self.highway_enter.isDataInPipe():
+                    highwayEnter = self.highway_enter.receive()
+                if self.highway_exit.isDataInPipe():
+                    highwayExit = self.highway_exit.receive()
                 if not self.onHighway and highwayEnter:
+                    print("ENTERED HIGHWAY")
                     self.onHighway = True
                     targetSpeed = threadmove.HIGHWAY_SPEED
                 if self.onHighway and highwayExit:
+                    print("EXITED HIGHWAY")
                     self.onHighway = False
                     targetSpeed = threadmove.NORMAL_SPEED
-                lineInFront = self.line_in_front.receive()
-                stopSign = self.stop_sign.receive()
+                
+                
 
-                if stopSign:
-                    if not self.passingStop:
-                        print("SAW STOP")
-                        self.sawStop = True
+                if self.stop_sign.isDataInPipe():
+                    stopSign = self.stop_sign.receive()
+                    if stopSign:
+                        if not self.passingStop:
+                            print("SAW STOP")
+                            self.sawStop = True
 
-                if lineInFront is not None:
-                    if lineInFront and self.sawStop:
-                        print("STOPPING")
-                        targetSpeed = "0"
-                        self.sawStop = False
-                        time.sleep(3)
-                        self.passingStop = True
-                    if not lineInFront and self.passingStop:
-                        self.passingStop = False
+                if self.line_in_front.isDataInPipe():
+                    lineInFront = self.line_in_front.receive()
+                    if lineInFront is not None:
+                        if lineInFront and self.sawStop:
+                            print("STOPPING")
+                            self.speed.send("0")
+                            self.sawStop = False
+                            time.sleep(3)
+                            self.speed.send(self.currentSpeed)
+                            self.passingStop = True
+                        if not lineInFront and self.passingStop:
+                            print("LEFT STOP")
+                            self.passingStop = False
 
                 if self.currentSpeed != targetSpeed:
+                    print("CHANGED SPEED")
                     self.currentSpeed = targetSpeed
                     self.speed.send(self.currentSpeed)
 
