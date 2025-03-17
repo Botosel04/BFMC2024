@@ -1,13 +1,30 @@
+from typing import Tuple
 import cv2
 from src.templates.threadwithstop import ThreadWithStop
-from src.utils.messages.allMessages import (mainCamera, serialCamera)
+from src.utils.messages.allMessages import (mainCamera, serialCamera, StopSign)
 from src.utils.messages.messageHandlerSubscriber import messageHandlerSubscriber
 from src.utils.messages.messageHandlerSender import messageHandlerSender
 import base64
 import numpy as np
-print("wha")
 from ultralytics import YOLO
-print("whaaaaaaa")
+
+class DetectionData:
+    LEFT = 0
+    RIGHT = 0
+
+    def __init__(self, conf, xyxy, orig_img: Tuple[int, int]):
+        self.conf = float(conf)
+        if (xyxy[0] + xyxy[2]) / 2 < orig_img[0]:
+            self.side = DetectionData.LEFT
+        else:
+            self.side = DetectionData.RIGHT
+
+    def is_left(self):
+        return self.side == DetectionData.LEFT
+
+    def is_right(self):
+        return self.side == DetectionData.RIGHT
+
 class threadsignDetection(ThreadWithStop):
     """This thread handles signDetection.
     Args:
@@ -26,9 +43,10 @@ class threadsignDetection(ThreadWithStop):
 
         self.frameCount = 0
 
-        print("helo")
         self.model = YOLO("src/perception/models/best_ncnn_model")
         #self.model = YOLO("src/perception/models/best.pt")
+
+        self.stop_sign = messageHandlerSender(self.queuesList, StopSign)
 
     def run(self):
         while self._running:
@@ -52,3 +70,7 @@ class threadsignDetection(ThreadWithStop):
                 pred = detect.pop()
                 detectProbs = [[pred.names[int(a)], float(b)] for a, b in list(zip(pred.boxes.cls, pred.boxes.conf))]
                 coords = [[[int(a) for a in sign[0:2]], [int(a) for a in sign[2:4]]] for sign in pred.boxes.data]
+                for i in range(len(pred.boxes.cls)):
+                    detection = DetectionData(pred.boxes.conf[i], pred.boxes.xyxy[i], pred.orig_shape)
+                    if int(pred.boxes.cls[i]) == 8:
+                        self.stop_sign.send(detection)
