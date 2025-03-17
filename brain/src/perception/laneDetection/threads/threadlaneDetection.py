@@ -34,6 +34,9 @@ class threadlaneDetection(ThreadWithStop):
 
         self.wid = 512
 
+        self.lastLine = False
+        self.lastPedestrian = False
+
         self.lane_roi = [[170, 200], [int(self.wid*0.3), int(self.wid*0.7)]]
         self.pedestrian_roi = [[180, 205], [int(self.wid*0.3), int(self.wid*0.7)]]
 
@@ -52,18 +55,24 @@ class threadlaneDetection(ThreadWithStop):
                 cropped_lane = image[self.lane_roi[0][0]:self.lane_roi[0][1], self.lane_roi[1][0]:self.lane_roi[1][1]]
                 self.whiteForLine = self.countWhitePixels(cropped_lane)
                 if self.whiteForLine > self.roisize * 0.1:
-                    self.lineInFront.send(True)
-                else:
+                    if not self.lastLine:
+                        self.lineInFront.send(True)
+                        self.lastLine = True
+                elif self.lastLine:
                     self.lineInFront.send(False)
+                    self.lastLine = False
 
 
                 #pedestrain detection
                 cropped_pedestrian = image[self.pedestrian_roi[0][0]:self.pedestrian_roi[0][1], self.pedestrian_roi[1][0]:self.pedestrian_roi[1][1]]
-                self.existPedestrian = self.countPinkPixels(cropped_pedestrian)
-                if self.existPedestrian > 10:
-                    self.pedestrian.send(True)
-                else:
+                pink_count = self.countPinkPixels(cropped_pedestrian)
+                if pink_count > 10:
+                    if not self.lastPedestrian:
+                        self.pedestrian.send(True)
+                        self.lastPedestrian = True
+                elif self.lastPedestrian:
                     self.pedestrian.send(False)
+                    self.lastPedestrian = False
 
                 steer_angle, processed_image, no_of_lines = getSteer(image)
 
