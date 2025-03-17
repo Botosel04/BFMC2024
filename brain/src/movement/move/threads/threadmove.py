@@ -62,6 +62,7 @@ class threadmove(ThreadWithStop):
 
                     if lineInFront:
                         if lineInFront and self.sawStop:
+                            print("STOPPING")
                             self.speed.send("0")
                             self.sawStop = False
                             time.sleep(1)
