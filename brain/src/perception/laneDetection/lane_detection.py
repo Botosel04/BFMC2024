@@ -32,12 +32,19 @@ prev_righty2 = None
 prev_left_fit2 = []
 prev_right_fit2 = []
 
+ema_offset = None
 
 def canny(image):
     gray = cv2.cvtColor(image, cv2.COLOR_RGB2GRAY)
     blur = cv2.GaussianBlur(gray, (5, 5), 0)
     canny = cv2.Canny(blur, 100, 200)
     return canny
+
+def exponential_moving_average(new_value, prev_ema, alpha=0.2):
+    if prev_ema is None:
+        return new_value  # Initialize EMA on first value
+    return alpha * new_value + (1 - alpha) * prev_ema
+
 
 class Lane:
   """
@@ -838,6 +845,11 @@ def getSteer1(frame, plot=False):
     offset = offset - 15 # account for bias towards the left
     if forcedOffset is not None:
       offset = forcedOffset
+
+    global ema_offset
+    offset = exponential_moving_average(offset, ema_offset, alpha=0.2)
+    ema_offset = offset
+    
     # Display curvature and center offset on image
     frame_with_lane_lines2 = lane_obj.display_curvature_offset(
         frame=frame_with_lane_lines, plot=False)
