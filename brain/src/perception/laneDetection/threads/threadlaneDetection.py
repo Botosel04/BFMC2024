@@ -32,8 +32,8 @@ class threadlaneDetection(ThreadWithStop):
 
         self.wid = 512
 
-        self.roi = [[175, 185], [int(self.wid*0.3), int(self.wid*0.7)]]
-        self.roisize = (185 - 175) * (int(self.wid*0.7) - int(self.wid*0.3))
+        self.roi = [[170, 200], [int(self.wid*0.3), int(self.wid*0.7)]]
+        self.roisize = (200 - 170) * (int(self.wid*0.7) - int(self.wid*0.3))
 
     def run(self):
         while self._running:
