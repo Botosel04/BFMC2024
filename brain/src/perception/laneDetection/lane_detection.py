@@ -843,12 +843,20 @@ def getSteer1(frame, plot=False):
     # Calculate center offset  																
     offset = lane_obj.calculate_car_position(print_to_terminal=False)
     offset = offset - 15 # account for bias towards the left
+
     if forcedOffset is not None:
       offset = forcedOffset
 
     global ema_offset
     offset = exponential_moving_average(offset, ema_offset, alpha=0.2)
     ema_offset = offset
+    out_offset = ema_offset
+
+    if forcedOffset is not None:
+      out_offset = forcedOffset
+    
+
+    
     
     # Display curvature and center offset on image
     frame_with_lane_lines2 = lane_obj.display_curvature_offset(
@@ -859,7 +867,7 @@ def getSteer1(frame, plot=False):
     # elif right_curve < 10:
     #   offset = -62.5
     # Write the frame to the output video file
-    return (offset, frame_with_lane_lines2, lane_obj.no_of_lines)
+    return (out_offset, frame_with_lane_lines2, lane_obj.no_of_lines)
  
  
 
@@ -868,7 +876,7 @@ def getSteer(frame):
     return getSteer1(frame)
   except:
     print("\no puscat\n")
-    return [0, 0, 0, None, 0]
+    return [0, 0, 0, frame, 0]
   
 if __name__ == '__main__':
   cap = cv2.VideoCapture('brain/src/perception/laneDetection/test-car.avi')
