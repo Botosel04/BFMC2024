@@ -287,3 +287,27 @@ class ParkingSign(Enum):
     Owner = "signDetection"
     msgID = 5
     msgType = "str"
+
+class CrosswalkSign(Enum):
+    Queue = "General"
+    Owner = "signDetection"
+    msgID = 6
+    msgType = "str"
+
+class NoEntryRoadSign(Enum):
+    Queue = "General"
+    Owner = "signDetection"
+    msgID = 7
+    msgType = "str"
+
+class OneWayRoadSign(Enum):
+    Queue = "General"
+    Owner = "signDetection"
+    msgID = 8
+    msgType = "str"
+
+class RoundaboutSign(Enum):
+    Queue = "General"
+    Owner = "signDetection"
+    msgID = 9
+    msgType = "str"
